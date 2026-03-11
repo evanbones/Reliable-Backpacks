@@ -1,13 +1,13 @@
 package com.evandev.reliable_backpacks.client.rendering;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Axis;
-import com.evandev.reliable_backpacks.Backpacks;
+import com.evandev.reliable_backpacks.Constants;
 import com.evandev.reliable_backpacks.platform.Services;
 import com.evandev.reliable_backpacks.registry.BPDataAttatchments;
 import com.evandev.reliable_backpacks.registry.BPItems;
 import com.evandev.reliable_backpacks.registry.BPLayers;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.model.geom.ModelPart;
@@ -31,13 +31,12 @@ import org.jetbrains.annotations.NotNull;
 import tech.thatgravyboat.vanity.common.item.DesignHelper;
 
 public class BackpackLayer<T extends LivingEntity, M extends HumanoidModel<T>> extends RenderLayer<T, M> {
+    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "textures/model/backpack.png");
+    private static final ResourceLocation OVERLAY_TEXTURE = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "textures/model/backpack_overlay.png");
     private final ModelPart backpackModel;
     private final ModelPart otherBackpackModel;
-    private ModelPart model;
     private final ModelPart parentBody;
-
-    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(Backpacks.MODID, "textures/model/backpack.png");
-    private static final ResourceLocation OVERLAY_TEXTURE = ResourceLocation.fromNamespaceAndPath(Backpacks.MODID, "textures/model/backpack_overlay.png");
+    private ModelPart model;
 
     public BackpackLayer(RenderLayerParent renderer, EntityModelSet entityModelSet) {
         super(renderer);
@@ -84,7 +83,9 @@ public class BackpackLayer<T extends LivingEntity, M extends HumanoidModel<T>> e
                 stack.mulPose(Axis.YP.rotationDegrees(180.0F));
                 renderBaseLayer(stack, buffer, packedLight, livingEntity, partialTicks, itemStack, false);
             });
-            if (!render && shouldRender) { renderBaseLayer(poseStack, buffer, packedLight, livingEntity, partialTicks, itemStack, true); }
+            if (!render && shouldRender) {
+                renderBaseLayer(poseStack, buffer, packedLight, livingEntity, partialTicks, itemStack, true);
+            }
         } else {
             renderBaseLayer(poseStack, buffer, packedLight, livingEntity, partialTicks, itemStack, true);
         }
@@ -97,17 +98,19 @@ public class BackpackLayer<T extends LivingEntity, M extends HumanoidModel<T>> e
         int openTicks = BPDataAttatchments.getOpenTicks(livingEntity);
 
         if (isOpen && openTicks < 10) {
-            float t = ((float)openTicks + partialTicks);
+            float t = ((float) openTicks + partialTicks);
             lidRot = (float) Math.pow(2, -1 * t) * Mth.sin((t - 0.75F) * 0.5F) + 1;
-        } else if (openTicks == 10){
+        } else if (openTicks == 10) {
             lidRot = 1;
-        } else if (openTicks > 0){
-            float t = ((float)openTicks - partialTicks);
+        } else if (openTicks > 0) {
+            float t = ((float) openTicks - partialTicks);
             lidRot = (float) -Math.pow(2, t - 10) * Mth.sin((t - 10.75F) * 0.5F);
         }
 
         this.model.getChild("base").getChild("lid").xRot = lidRot;
-        if (copyPose) { this.backpackModel.copyFrom(parentBody); }
+        if (copyPose) {
+            this.backpackModel.copyFrom(parentBody);
+        }
         VertexConsumer vertexConsumer = ItemRenderer.getArmorFoilBuffer(buffer, RenderType.armorCutoutNoCull(TEXTURE), itemStack.hasFoil());
         this.model.render(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY);
         renderColoredLayer(poseStack, buffer, packedLight, itemStack);

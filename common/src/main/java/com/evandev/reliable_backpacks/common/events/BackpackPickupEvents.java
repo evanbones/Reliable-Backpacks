@@ -81,7 +81,7 @@ public class BackpackPickupEvents {
                 level.setBlockEntity(blockEntity);
 
                 chestSlotItem.shrink(1);
-                level.playSound(null, pos.above(), BPSounds.BACKPACK_PLACE, SoundSource.BLOCKS);
+                level.playSound(null, pos.above(), BPSounds.BACKPACK_PLACE.value(), SoundSource.BLOCKS);
             }
             return InteractionResult.FAIL;
         }

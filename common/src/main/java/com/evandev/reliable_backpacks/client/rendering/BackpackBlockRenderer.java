@@ -1,9 +1,9 @@
 package com.evandev.reliable_backpacks.client.rendering;
 
+import com.evandev.reliable_backpacks.Constants;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
-import com.evandev.reliable_backpacks.Backpacks;
 import com.evandev.reliable_backpacks.common.blocks.BackpackBlock;
 import com.evandev.reliable_backpacks.common.blocks.BackpackBlockEntity;
 import com.evandev.reliable_backpacks.platform.Services;
@@ -20,12 +20,13 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
 import net.minecraft.util.Mth;
+import org.jetbrains.annotations.NotNull;
 
 public class BackpackBlockRenderer implements BlockEntityRenderer<BackpackBlockEntity> {
 
-    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(Backpacks.MODID, "textures/entity/backpack.png");
-    private static final ResourceLocation OVERLAY_TEXTURE = ResourceLocation.fromNamespaceAndPath(Backpacks.MODID, "textures/entity/backpack_overlay.png");
-    private static final ResourceLocation BASE_TEXTURE = ResourceLocation.fromNamespaceAndPath(Backpacks.MODID, "textures/entity/backpack_base.png");
+    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "textures/entity/backpack.png");
+    private static final ResourceLocation OVERLAY_TEXTURE = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "textures/entity/backpack_overlay.png");
+    private static final ResourceLocation BASE_TEXTURE = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "textures/entity/backpack_base.png");
     private final ModelPart backpack;
     private final ModelPart base;
     private final ModelPart lid;
@@ -37,7 +38,7 @@ public class BackpackBlockRenderer implements BlockEntityRenderer<BackpackBlockE
     }
 
     @Override
-    public void render(BackpackBlockEntity blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource buffer, int packedLight, int packedOverlay) {
+    public void render(BackpackBlockEntity blockEntity, float partialTick, PoseStack poseStack, @NotNull MultiBufferSource buffer, int packedLight, int packedOverlay) {
         poseStack.pushPose();
         boolean isFloating = blockEntity.getBlockState().getValue(BackpackBlock.FLOATING);
         float dir = ((Direction)blockEntity.getBlockState().getValue(BackpackBlock.FACING)).toYRot();

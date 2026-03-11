@@ -1,6 +1,6 @@
 package com.evandev.reliable_backpacks.registry;
 
-import com.evandev.reliable_backpacks.Backpacks;
+import com.evandev.reliable_backpacks.Constants;
 import com.evandev.reliable_backpacks.common.items.BackpackItem;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -13,6 +13,6 @@ public class BPItems {
             .fireResistant());
 
     public static void init() {
-        Registry.register(BuiltInRegistries.ITEM, ResourceLocation.fromNamespaceAndPath(Backpacks.MODID, "backpack"), BACKPACK);
+        Registry.register(BuiltInRegistries.ITEM, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack"), BACKPACK);
     }
 }

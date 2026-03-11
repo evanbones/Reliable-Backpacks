@@ -1,16 +1,17 @@
 package com.evandev.reliable_backpacks.registry;
 
-import com.evandev.reliable_backpacks.Backpacks;
+import com.evandev.reliable_backpacks.Constants;
+import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 
 public class BPSounds {
-    public static SoundEvent BACKPACK_PLACE;
-    public static SoundEvent BACKPACK_OPEN;
-    public static SoundEvent BACKPACK_CLOSE;
-    public static SoundEvent BACKPACK_EQUIP;
+    public static Holder<SoundEvent> BACKPACK_PLACE;
+    public static Holder<SoundEvent> BACKPACK_OPEN;
+    public static Holder<SoundEvent> BACKPACK_CLOSE;
+    public static Holder<SoundEvent> BACKPACK_EQUIP;
 
     public static void init() {
         BACKPACK_PLACE = register("block.backpack.place");
@@ -19,8 +20,8 @@ public class BPSounds {
         BACKPACK_EQUIP = register("item.backpack.equip");
     }
 
-    private static SoundEvent register(String name) {
-        ResourceLocation id = ResourceLocation.fromNamespaceAndPath(Backpacks.MODID, name);
-        return Registry.register(BuiltInRegistries.SOUND_EVENT, id, SoundEvent.createVariableRangeEvent(id));
+    private static Holder<SoundEvent> register(String name) {
+        ResourceLocation id = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, name);
+        return Registry.registerForHolder(BuiltInRegistries.SOUND_EVENT, id, SoundEvent.createVariableRangeEvent(id));
     }
 }

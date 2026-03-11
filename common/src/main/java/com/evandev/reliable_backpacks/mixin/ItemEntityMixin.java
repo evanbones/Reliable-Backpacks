@@ -34,20 +34,21 @@ public abstract class ItemEntityMixin extends Entity implements TraceableEntity 
         super(entityType, level);
     }
 
-    @Inject(
-            method = "tick",
-            at = @At("HEAD")
-    )
+    @Inject(method = "tick", at = @At("HEAD"))
     public void tick(CallbackInfo ci) {
-        ItemStack itemStack = ((ItemEntity)(Object)this).getItem();
+        ItemStack itemStack = ((ItemEntity) (Object) this).getItem();
         boolean hasContainer = itemStack.has(DataComponents.CONTAINER);
         boolean isEmpty = Objects.equals(itemStack.get(DataComponents.CONTAINER), ItemContainerContents.EMPTY);
 
         if (itemStack.is(BPItems.BACKPACK) && hasContainer && !isEmpty) {
-            if (((ItemEntity)(Object)this).getAge() > 0) { ((ItemEntity)(Object)this).setExtendedLifetime(); }
+            if (((ItemEntity) (Object) this).getAge() > 0) {
+                ((ItemEntity) (Object) this).setExtendedLifetime();
+            }
 
-            this.setDeltaMovement(this.getDeltaMovement().multiply(0.9, 1.0,0.9));
-            if (this.isInFluidType()) { this.getDeltaMovement().add(0.0, 20.0, 0.0); }
+            this.setDeltaMovement(this.getDeltaMovement().multiply(0.9, 1.0, 0.9));
+            if (this.isInWater() || this.isInLava()) {
+                this.getDeltaMovement().add(0.0, 20.0, 0.0);
+            }
 
             Level level = level();
             BlockPos pos = this.getOnPos();
@@ -56,7 +57,7 @@ public abstract class ItemEntityMixin extends Entity implements TraceableEntity 
 
             if ((!level.getBlockState(pos).is(BlockTags.REPLACEABLE) || level.getFluidState(pos).isSource()) && isUnobstructed) {
 
-                BlockState state = BPBlocks.BACKPACK.get().defaultBlockState()
+                BlockState state = BPBlocks.BACKPACK.defaultBlockState()
                         .setValue(FACING, getDirection())
                         .setValue(FLOATING, level.getFluidState(pos).isSource() && !level.getFluidState(pos.above()).isSource())
                         .setValue(WATERLOGGED, level.getFluidState(pos.above()).getType() == Fluids.WATER);

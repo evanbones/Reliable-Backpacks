@@ -1,6 +1,6 @@
 package com.evandev.reliable_backpacks.registry;
 
-import com.evandev.reliable_backpacks.Backpacks;
+import com.evandev.reliable_backpacks.Constants;
 import com.evandev.reliable_backpacks.common.blocks.BackpackBlockEntity;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -13,7 +13,7 @@ public class BPBlockEntities {
     public static void init() {
         BACKPACK = Registry.register(
                 BuiltInRegistries.BLOCK_ENTITY_TYPE,
-                ResourceLocation.fromNamespaceAndPath(Backpacks.MODID, "backpack"),
+                ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack"),
                 BlockEntityType.Builder.of(BackpackBlockEntity::new, BPBlocks.BACKPACK).build(null)
         );
     }

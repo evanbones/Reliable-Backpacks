@@ -44,14 +44,14 @@ public class BackpackItemContainer extends SimpleContainer {
     @Override
     public void startOpen(@NotNull Player player) {
         Services.PLATFORM.sendToTracking(target, new BackpackOpenPayload(true, target.getId()));
-        target.level().playSound(null, target.blockPosition(), BPSounds.BACKPACK_OPEN, SoundSource.PLAYERS);
+        target.level().playSound(null, target.blockPosition(), BPSounds.BACKPACK_OPEN.value(), SoundSource.PLAYERS);
         super.startOpen(player);
     }
 
     @Override
     public void stopOpen(@NotNull Player player) {
         Services.PLATFORM.sendToTracking(target, new BackpackOpenPayload(false, target.getId()));
-        target.level().playSound(null, target.blockPosition(), BPSounds.BACKPACK_CLOSE, SoundSource.PLAYERS);
+        target.level().playSound(null, target.blockPosition(), BPSounds.BACKPACK_CLOSE.value(), SoundSource.PLAYERS);
         super.stopOpen(player);
     }
 }

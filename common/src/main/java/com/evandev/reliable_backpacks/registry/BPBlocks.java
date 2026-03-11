@@ -1,6 +1,6 @@
 package com.evandev.reliable_backpacks.registry;
 
-import com.evandev.reliable_backpacks.Backpacks;
+import com.evandev.reliable_backpacks.Constants;
 import com.evandev.reliable_backpacks.common.blocks.BackpackBlock;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -16,12 +16,12 @@ public class BPBlocks {
             .sound(new SoundType(1.0F, 1.0F,
                     SoundEvents.WOOL_BREAK,
                     SoundEvents.WOOL_STEP,
-                    BPSounds.BACKPACK_PLACE,
+                    BPSounds.BACKPACK_PLACE.value(),
                     SoundEvents.WOOL_HIT,
                     SoundEvents.WOOL_FALL))
             .forceSolidOn());
 
     public static void init() {
-        Registry.register(BuiltInRegistries.BLOCK, ResourceLocation.fromNamespaceAndPath(Backpacks.MODID, "backpack"), BACKPACK);
+        Registry.register(BuiltInRegistries.BLOCK, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack"), BACKPACK);
     }
 }
