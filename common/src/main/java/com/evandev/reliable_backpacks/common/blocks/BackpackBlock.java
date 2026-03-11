@@ -1,8 +1,8 @@
 package com.evandev.reliable_backpacks.common.blocks;
 
-import com.mojang.serialization.MapCodec;
 import com.evandev.reliable_backpacks.registry.BPBlockEntities;
 import com.evandev.reliable_backpacks.registry.BPSounds;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -17,7 +17,9 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.*;
-import net.minecraft.world.level.block.entity.*;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -29,17 +31,26 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public class BackpackBlock extends BaseEntityBlock implements Equipable, EntityBlock, SimpleWaterloggedBlock {
+    public static final DirectionProperty FACING;
+    public static final BooleanProperty FLOATING;
+    public static final BooleanProperty WATERLOGGED;
     protected static final VoxelShape SHAPE_X;
     protected static final VoxelShape SHAPE_Z;
     protected static final VoxelShape FLOATING_SHAPE_X;
     protected static final VoxelShape FLOATING_SHAPE_Z;
-    public static final DirectionProperty FACING;
-    public static final BooleanProperty FLOATING;
-    public static final BooleanProperty WATERLOGGED;
+
+    static {
+        FACING = HorizontalDirectionalBlock.FACING;
+        FLOATING = BooleanProperty.create("floating");
+        WATERLOGGED = BlockStateProperties.WATERLOGGED;
+        SHAPE_X = Block.box(3.0, 0.0, 4.0, 13.0, 11.0, 12.0);
+        SHAPE_Z = Block.box(4.0, 0.0, 3.0, 12.0, 11.0, 13.0);
+        FLOATING_SHAPE_X = Block.box(3.0, 0.0, 4.0, 13.0, 8.0, 12.0);
+        FLOATING_SHAPE_Z = Block.box(4.0, 0.0, 3.0, 12.0, 8.0, 13.0);
+    }
 
     public BackpackBlock(Properties properties) {
         super(properties);
@@ -75,7 +86,9 @@ public class BackpackBlock extends BaseEntityBlock implements Equipable, EntityB
         return createTickerHelper(type, BPBlockEntities.BACKPACK, BackpackBlockEntity::tick);
     }
 
-    public @NotNull EquipmentSlot getEquipmentSlot() { return EquipmentSlot.CHEST; }
+    public @NotNull EquipmentSlot getEquipmentSlot() {
+        return EquipmentSlot.CHEST;
+    }
 
     public @NotNull Holder<SoundEvent> getEquipSound() {
         return BPSounds.BACKPACK_EQUIP;
@@ -128,15 +141,5 @@ public class BackpackBlock extends BaseEntityBlock implements Equipable, EntityB
         builder.add(FACING);
         builder.add(FLOATING);
         builder.add(WATERLOGGED);
-    }
-
-    static {
-        FACING = HorizontalDirectionalBlock.FACING;
-        FLOATING = BooleanProperty.create("floating");
-        WATERLOGGED = BlockStateProperties.WATERLOGGED;
-        SHAPE_X = Block.box(3.0, 0.0, 4.0, 13.0, 11.0, 12.0);
-        SHAPE_Z = Block.box(4.0, 0.0, 3.0, 12.0, 11.0, 13.0);
-        FLOATING_SHAPE_X = Block.box(3.0, 0.0, 4.0, 13.0, 8.0, 12.0);
-        FLOATING_SHAPE_Z = Block.box(4.0, 0.0, 3.0, 12.0, 8.0, 13.0);
     }
 }
