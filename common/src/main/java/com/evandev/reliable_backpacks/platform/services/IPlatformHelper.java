@@ -1,5 +1,8 @@
 package com.evandev.reliable_backpacks.platform.services;
 
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.world.entity.Entity;
+
 import java.nio.file.Path;
 
 public interface IPlatformHelper {
@@ -47,4 +50,9 @@ public interface IPlatformHelper {
      * @return True if on the client, false if on a dedicated server.
      */
     boolean isPhysicalClient();
+
+    /**
+     * Sends a packet to all players tracking the given entity, and the entity itself if it's a player.
+     */
+    void sendToTracking(Entity target, CustomPacketPayload payload);
 }
