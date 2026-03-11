@@ -4,11 +4,9 @@ import com.evandev.reliable_backpacks.client.ClientConfigSetup;
 import com.evandev.reliable_backpacks.client.ReliableBackpacksClient;
 import com.evandev.reliable_backpacks.networking.BackpackOpenPayload;
 import com.evandev.reliable_backpacks.networking.BackpackPayloadHandler;
-import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.registries.RegisterEvent;
@@ -19,7 +17,6 @@ public class ReliableBackpacks {
 
     public ReliableBackpacks(IEventBus modEventBus, ModContainer modContainer) {
         modEventBus.addListener(this::onRegister);
-        modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::registerNetworking);
 
         if (FMLEnvironment.dist.isClient()) {
@@ -37,15 +34,11 @@ public class ReliableBackpacks {
         }
     }
 
-    private void commonSetup(final FMLCommonSetupEvent event) {
-        CommonClass.init();
-    }
-
     private void registerNetworking(final RegisterPayloadHandlersEvent event) {
         event.registrar("1").playToClient(
                 BackpackOpenPayload.TYPE,
                 BackpackOpenPayload.STREAM_CODEC,
-                (payload, context) -> BackpackPayloadHandler.handleClientData(payload, (Player) context.player())
+                (payload, context) -> BackpackPayloadHandler.handleClientData(payload, context.player())
         );
     }
 }

@@ -1,6 +1,6 @@
 {
   "variants": {
-    "": { "model": "backpacks:block/backpack" }
+    "": { "model": "reliable_backpacks:block/backpack" }
   }
 }
 

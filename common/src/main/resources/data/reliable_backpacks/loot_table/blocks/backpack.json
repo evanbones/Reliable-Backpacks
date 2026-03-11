@@ -21,11 +21,11 @@
               "source": "block_entity"
             }
           ],
-          "name": "backpacks:backpack"
+          "name": "reliable_backpacks:backpack"
         }
       ],
       "rolls": 1.0
     }
   ],
-  "random_sequence": "backpacks:blocks/backpack"
+  "random_sequence": "reliable_backpacks:blocks/backpack"
 }

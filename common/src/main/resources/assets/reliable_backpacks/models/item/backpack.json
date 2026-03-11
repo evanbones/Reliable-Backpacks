@@ -1,14 +1,14 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "backpacks:item/backpack"
+    "layer0": "reliable_backpacks:item/backpack"
   },
   "overrides": [
     {
       "predicate": {
-        "backpacks:dyed": 1
+        "reliable_backpacks:dyed": 1
       },
-      "model": "backpacks:item/dyed_backpack"
+      "model": "reliable_backpacks:item/dyed_backpack"
     }
   ]
 }

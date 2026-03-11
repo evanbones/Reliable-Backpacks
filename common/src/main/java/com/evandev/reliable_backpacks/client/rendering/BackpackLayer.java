@@ -55,7 +55,7 @@ public class BackpackLayer<T extends LivingEntity, M extends HumanoidModel<T>> e
                     this.model = backpackModel;
                 } else {
                     String path = design.toString();
-                    if (path.equals("backpacks:test")) {
+                    if (path.equals("reliable_backpacks:test")) {
                         this.model = otherBackpackModel;
                     } else {
                         this.model = backpackModel;

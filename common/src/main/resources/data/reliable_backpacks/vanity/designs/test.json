@@ -5,7 +5,7 @@
   "styles": {
     "default": [
       {
-        "item": "backpacks:backpack",
+        "item": "reliable_backpacks:backpack",
         "assets": {
           "default": "example:sword",
           "armor": ""

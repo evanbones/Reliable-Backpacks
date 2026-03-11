@@ -1,6 +1,6 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"particle": "backpacks:block/backpack"
+		"particle": "reliable_backpacks:block/backpack"
 	}
 }
