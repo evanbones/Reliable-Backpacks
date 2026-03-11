@@ -1,0 +1,60 @@
+plugins {
+    id 'multiloader-loader'
+    id 'net.neoforged.moddev'
+}
+
+neoForge {
+    version = neoforge_version
+    def at = project(':common').file('src/main/resources/META-INF/accesstransformer.cfg')
+    if (at.exists()) {
+        accessTransformers.from(at.absolutePath)
+    }
+
+    parchment {
+        minecraftVersion = parchment_minecraft
+        mappingsVersion = parchment_version
+    }
+
+    runs {
+        configureEach {
+            systemProperty('neoforge.enabledGameTestNamespaces', mod_id)
+            ideName = "NeoForge ${it.name.capitalize()} (${project.path})"
+        }
+        client {
+            client()
+        }
+        server {
+            server()
+        }
+    }
+
+    mods {
+        "${mod_id}" {
+            sourceSet sourceSets.main
+        }
+    }
+}
+
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+dependencies {
+    // EMI
+    implementation "dev.emi:emi-neoforge:${emi_version}"
+
+    // Cloth Config
+    implementation "me.shedaniel.cloth:cloth-config-neoforge:${cloth_config_version}"
+
+    runtimeOnly "maven.modrinth:farmers-delight:1.21.1-1.2.7"
+    runtimeOnly "maven.modrinth:sodium:Pb3OXVqC"
+    compileOnly "maven.modrinth:iris:oXIoDcGE"
+    runtimeOnly "maven.modrinth:new_world:1.7.1"
+    runtimeOnly "maven.modrinth:biolith:5P2awS2z"
+    runtimeOnly "maven.modrinth:spyglass-improvements:1.5.7+mc1.21+neoforge"
+    compileOnly "maven.modrinth:spyglass-improvements:1.5.7+mc1.21+neoforge"
+    compileOnly "maven.modrinth:figura:yXFi1fed"
+    compileOnly "maven.modrinth:vanity-core:5.0.2"
+}
+
+publishMods {
+    file = tasks.named("jar").flatMap { it.archiveFile }
+}

@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "id": "${mod_id}",
+  "version": "${version}",
+  "name": "${mod_name}",
+  "description": "${description}",
+  "authors": [
+    "${mod_author}"
+  ],
+  "contact": {
+    "homepage": "https://github.com/evanbones/Reliable-Backpacks",
+    "sources": "https://github.com/evanbones/Reliable-Backpacks"
+  },
+  "license": "${license}",
+  "icon": "${mod_id}.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.evandev.reliable_backpacks.ReliableBackpacks"
+    ],
+    "client": [
+      "com.evandev.reliable_backpacks.client.ReliableBackpacksClient"
+    ],
+    "modmenu": [
+      "com.evandev.reliable_backpacks.compat.ModMenuIntegration"
+    ],
+    "fabric-datagen": [
+      "com.evandev.reliable_backpacks.datagen.TemplateDataGenerator"
+    ]
+  },
+  "mixins": [
+    "${mod_id}.mixins.json",
+    "${mod_id}.fabric.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.14",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}",
+    "java": ">=21"
+  }
+}

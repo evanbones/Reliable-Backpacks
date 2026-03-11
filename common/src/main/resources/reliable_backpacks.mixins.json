@@ -1,0 +1,20 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "compatibilityLevel": "JAVA_18",
+  "package": "com.evandev.reliable_backpacks.mixin",
+  "plugin": "com.moulberry.mixinconstraints.ConstraintsMixinPlugin",
+  "mixins": [
+    "ArmorSlotMixin",
+    "ItemEntityMixin",
+    "LivingEntityMixin"
+  ],
+  "client": [
+    "CapeLayerMixin",
+    "integration.SpyglassImprovementsClientMixin"
+  ],
+  "server": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
