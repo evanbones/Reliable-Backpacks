@@ -33,7 +33,6 @@ import java.util.Objects;
 import static com.evandev.reliable_backpacks.common.blocks.BackpackBlock.FACING;
 import static com.evandev.reliable_backpacks.common.blocks.BackpackBlock.WATERLOGGED;
 
-// Bind these in your loader-specific event registries
 public class BackpackPickupEvents {
 
     public static InteractionResult onRightClickBlock(Player player, Level level, InteractionHand hand, BlockHitResult hitResult) {
@@ -62,7 +61,8 @@ public class BackpackPickupEvents {
                 level.removeBlockEntity(pos);
                 level.removeBlock(pos, false);
             }
-            return InteractionResult.FAIL;
+
+            return InteractionResult.sidedSuccess(level.isClientSide);
         }
 
         // PLACEMENT
@@ -83,7 +83,8 @@ public class BackpackPickupEvents {
                 chestSlotItem.shrink(1);
                 level.playSound(null, pos.above(), BPSounds.BACKPACK_PLACE.value(), SoundSource.BLOCKS);
             }
-            return InteractionResult.FAIL;
+
+            return InteractionResult.sidedSuccess(level.isClientSide);
         }
         return InteractionResult.PASS;
     }
