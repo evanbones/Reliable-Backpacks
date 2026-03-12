@@ -53,6 +53,13 @@ public class BackpackPickupEvents {
         if (player.isShiftKeyDown() && !hasChestPlate && block == BPBlocks.BACKPACK && blockEntity != null) {
             player.swing(InteractionHand.MAIN_HAND);
             ItemStack itemstack = new ItemStack(BPBlocks.BACKPACK);
+
+            if (blockEntity instanceof BackpackBlockEntity backpackEntity) {
+                if (backpackEntity.getBackpackItemTag() != null) {
+                    itemstack.setTag(backpackEntity.getBackpackItemTag().copy());
+                }
+            }
+
             CompoundTag nbt = blockEntity.saveWithoutMetadata();
             itemstack.addTagElement("BlockEntityTag", nbt);
 
@@ -80,6 +87,14 @@ public class BackpackPickupEvents {
                     .setValue(WATERLOGGED, level.getFluidState(targetPos).getType() == Fluids.WATER);
 
             BackpackBlockEntity newBlockEntity = new BackpackBlockEntity(targetPos, state);
+
+            CompoundTag itemTag = chestSlotItem.getTag();
+            if (itemTag != null) {
+                CompoundTag copy = itemTag.copy();
+                copy.remove("BlockEntityTag");
+                newBlockEntity.setBackpackItemTag(copy);
+            }
+
             CompoundTag nbt = chestSlotItem.getTagElement("BlockEntityTag");
             if (nbt != null) {
                 newBlockEntity.load(nbt);

@@ -8,7 +8,6 @@ import com.evandev.reliable_backpacks.registry.BPSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.TraceableEntity;
@@ -84,6 +83,14 @@ public abstract class ItemEntityMixin extends Entity implements TraceableEntity 
                         .setValue(WATERLOGGED, level.getFluidState(targetPos).getType() == Fluids.WATER);
 
                 BackpackBlockEntity blockEntity = new BackpackBlockEntity(targetPos, state);
+
+                CompoundTag itemTag = itemStack.getTag();
+                if (itemTag != null) {
+                    CompoundTag copy = itemTag.copy();
+                    copy.remove("BlockEntityTag");
+                    blockEntity.setBackpackItemTag(copy);
+                }
+
                 CompoundTag nbt = itemStack.getTagElement("BlockEntityTag");
                 if (nbt != null) {
                     blockEntity.load(nbt);

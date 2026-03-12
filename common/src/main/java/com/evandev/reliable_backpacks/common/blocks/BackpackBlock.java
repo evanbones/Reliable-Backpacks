@@ -6,11 +6,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Equipable;
 import net.minecraft.world.item.ItemStack;
@@ -29,11 +29,15 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class BackpackBlock extends BaseEntityBlock implements Equipable, EntityBlock, SimpleWaterloggedBlock {
     public static final DirectionProperty FACING;
@@ -114,13 +118,10 @@ public class BackpackBlock extends BaseEntityBlock implements Equipable, EntityB
         }
     }
 
+    @Override
     public void onRemove(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState newState, boolean isMoving) {
         if (!state.is(newState.getBlock())) {
-            BlockEntity blockEntity = level.getBlockEntity(pos);
-            if (blockEntity instanceof BackpackBlockEntity backpackBlockEntity) {
-                Containers.dropContents(level, pos, backpackBlockEntity);
-                level.updateNeighbourForOutputSignal(pos, this);
-            }
+            level.updateNeighbourForOutputSignal(pos, this);
             super.onRemove(state, level, pos, newState, isMoving);
         }
     }
@@ -140,11 +141,63 @@ public class BackpackBlock extends BaseEntityBlock implements Equipable, EntityB
     public void setPlacedBy(@NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState state, @Nullable LivingEntity placer, @NotNull ItemStack stack) {
         super.setPlacedBy(level, pos, state, placer, stack);
         if (level.getBlockEntity(pos) instanceof BackpackBlockEntity blockEntity) {
+
+            CompoundTag itemTag = stack.getTag();
+            if (itemTag != null) {
+                CompoundTag copy = itemTag.copy();
+                copy.remove("BlockEntityTag");
+                blockEntity.setBackpackItemTag(copy);
+            }
+
             CompoundTag display = stack.getTagElement("display");
             if (display != null && display.contains("color", 99)) {
                 blockEntity.setColor(display.getInt("color"));
             }
         }
+    }
+
+    @Override
+    public void playerWillDestroy(Level level, @NotNull BlockPos pos, @NotNull BlockState state, @NotNull Player player) {
+        BlockEntity blockEntity = level.getBlockEntity(pos);
+        if (blockEntity instanceof BackpackBlockEntity backpack) {
+            if (!level.isClientSide && player.isCreative()) {
+                ItemStack itemStack = new ItemStack(this);
+
+                if (backpack.getBackpackItemTag() != null) {
+                    itemStack.setTag(backpack.getBackpackItemTag().copy());
+                }
+                itemStack.addTagElement("BlockEntityTag", backpack.saveWithoutMetadata());
+                if (backpack.getColor() != 0) {
+                    itemStack.getOrCreateTagElement("display").putInt("color", backpack.getColor());
+                }
+
+                ItemEntity itemEntity = new ItemEntity(level, pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, itemStack);
+                itemEntity.setDefaultPickUpDelay();
+                level.addFreshEntity(itemEntity);
+            }
+        }
+        super.playerWillDestroy(level, pos, state, player);
+    }
+
+    @Override
+    public @NotNull List<ItemStack> getDrops(@NotNull BlockState state, @NotNull LootParams.Builder builder) {
+        List<ItemStack> drops = super.getDrops(state, builder);
+        BlockEntity blockEntity = builder.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
+
+        if (blockEntity instanceof BackpackBlockEntity backpack) {
+            for (ItemStack drop : drops) {
+                if (drop.is(this.asItem())) {
+                    if (backpack.getBackpackItemTag() != null) {
+                        drop.setTag(backpack.getBackpackItemTag().copy());
+                    }
+                    drop.addTagElement("BlockEntityTag", backpack.saveWithoutMetadata());
+                    if (backpack.getColor() != 0) {
+                        drop.getOrCreateTagElement("display").putInt("color", backpack.getColor());
+                    }
+                }
+            }
+        }
+        return drops;
     }
 
     @Override

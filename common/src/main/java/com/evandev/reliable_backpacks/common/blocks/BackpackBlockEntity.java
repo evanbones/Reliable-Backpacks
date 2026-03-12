@@ -31,6 +31,7 @@ public class BackpackBlockEntity extends RandomizableContainerBlockEntity {
     private NonNullList<ItemStack> itemStacks;
     private int openCount;
     private int color;
+    private CompoundTag backpackItemTag;
 
     public BackpackBlockEntity(BlockPos pos, BlockState blockState) {
         super(BPBlockEntities.BACKPACK, pos, blockState);
@@ -57,6 +58,15 @@ public class BackpackBlockEntity extends RandomizableContainerBlockEntity {
         if (blockEntity.floatTicks == 90) {
             blockEntity.floatTicks = 0;
         }
+    }
+
+    public CompoundTag getBackpackItemTag() {
+        return this.backpackItemTag;
+    }
+
+    // Add getters and setters
+    public void setBackpackItemTag(CompoundTag tag) {
+        this.backpackItemTag = tag;
     }
 
     public int getColor() {
@@ -139,6 +149,10 @@ public class BackpackBlockEntity extends RandomizableContainerBlockEntity {
         this.floatTicks = tag.getInt("FloatTicks");
         this.newlyPlaced = tag.getBoolean("NewlyPlaced");
         this.color = tag.getInt("Color");
+
+        if (tag.contains("BackpackItemTag", 10)) {
+            this.backpackItemTag = tag.getCompound("BackpackItemTag");
+        }
     }
 
     @Override
@@ -151,6 +165,10 @@ public class BackpackBlockEntity extends RandomizableContainerBlockEntity {
         tag.putBoolean("NewlyPlaced", this.newlyPlaced);
         if (this.color != 0) {
             tag.putInt("Color", this.color);
+        }
+
+        if (this.backpackItemTag != null && !this.backpackItemTag.isEmpty()) {
+            tag.put("BackpackItemTag", this.backpackItemTag);
         }
     }
 
