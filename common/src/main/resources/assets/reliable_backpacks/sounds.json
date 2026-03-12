@@ -29,7 +29,7 @@
   "item.backpack.equip" : {
     "sounds" : [
       {
-        "name" : "item.armor.equip_wolf",
+        "name" : "item.armor.equip_leather",
         "pitch": 1.1,
         "type": "event"
       }

@@ -11,10 +11,14 @@ import com.evandev.reliable_backpacks.registry.BPBlocks;
 import com.evandev.reliable_backpacks.registry.BPItems;
 import com.evandev.reliable_backpacks.registry.BPSounds;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
@@ -44,6 +48,7 @@ public class ReliableBackpacks {
 
         modEventBus.addListener(this::onRegister);
         modEventBus.addListener(this::commonSetup);
+        modEventBus.addListener(this::addCreative);
 
         if (FMLEnvironment.dist.isClient()) {
             ClientConfigSetup.register();
@@ -119,6 +124,14 @@ public class ReliableBackpacks {
         if (result != InteractionResult.PASS) {
             event.setCanceled(true);
             event.setCancellationResult(result);
+        }
+    }
+
+    private void addCreative(BuildCreativeModeTabContentsEvent event) {
+        ResourceKey<CreativeModeTab> toolsTab = ResourceKey.create(Registries.CREATIVE_MODE_TAB, new ResourceLocation("tools_and_utilities"));
+
+        if (event.getTabKey() == toolsTab) {
+            event.accept(BPItems.BACKPACK);
         }
     }
 }
