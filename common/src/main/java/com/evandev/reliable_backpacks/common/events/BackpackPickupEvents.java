@@ -34,7 +34,8 @@ public class BackpackPickupEvents {
 
     public static InteractionResult onRightClickBlock(Player player, Level level, InteractionHand hand, BlockHitResult hitResult) {
         BlockPos pos = hitResult.getBlockPos();
-        Block block = level.getBlockState(pos).getBlock();
+        BlockState clickedState = level.getBlockState(pos);
+        Block block = clickedState.getBlock();
         BlockEntity blockEntity = level.getBlockEntity(pos);
 
         ItemStack heldItem = player.getItemInHand(hand);
@@ -42,9 +43,11 @@ public class BackpackPickupEvents {
 
         boolean hasBackpack = chestSlotItem.is(BPItems.BACKPACK);
         boolean hasChestPlate = !chestSlotItem.isEmpty();
-        boolean isAbove = (pos.above().getY() > player.getEyeY());
-        boolean isUnobstructed = level.isUnobstructed(BPBlocks.BACKPACK.defaultBlockState(), pos.above(),
-                CollisionContext.of(player)) && level.getBlockState(pos.above()).canBeReplaced();
+
+        BlockPos targetPos = clickedState.canBeReplaced() ? pos : pos.relative(hitResult.getDirection());
+        boolean isAbove = (targetPos.getY() > player.getEyeY());
+        boolean isUnobstructed = level.isUnobstructed(BPBlocks.BACKPACK.defaultBlockState(), targetPos,
+                CollisionContext.of(player)) && level.getBlockState(targetPos).canBeReplaced();
 
         // PICKUP
         if (player.isShiftKeyDown() && !hasChestPlate && block == BPBlocks.BACKPACK && blockEntity != null) {
@@ -53,11 +56,11 @@ public class BackpackPickupEvents {
             CompoundTag nbt = blockEntity.saveWithoutMetadata();
             itemstack.addTagElement("BlockEntityTag", nbt);
             player.setItemSlot(EquipmentSlot.CHEST, itemstack);
-            addParticles(level, pos);
 
             if (!level.isClientSide) {
                 level.removeBlockEntity(pos);
                 level.removeBlock(pos, false);
+                level.playSound(null, pos, BPSounds.BACKPACK_EQUIP, SoundSource.PLAYERS, 1.0F, 1.0F);
             }
 
             return InteractionResult.sidedSuccess(level.isClientSide);
@@ -69,20 +72,27 @@ public class BackpackPickupEvents {
 
             BlockState state = BPBlocks.BACKPACK.defaultBlockState()
                     .setValue(FACING, player.getDirection())
-                    .setValue(WATERLOGGED, level.getFluidState(pos.above()).getType() == Fluids.WATER);
+                    .setValue(WATERLOGGED, level.getFluidState(targetPos).getType() == Fluids.WATER);
 
-            blockEntity = new BackpackBlockEntity(pos.above(), state);
+            BackpackBlockEntity newBlockEntity = new BackpackBlockEntity(targetPos, state);
             CompoundTag nbt = chestSlotItem.getTagElement("BlockEntityTag");
             if (nbt != null) {
-                blockEntity.load(nbt);
+                newBlockEntity.load(nbt);
             }
 
+            newBlockEntity.newlyPlaced = true;
+            newBlockEntity.placeTicks = 0;
+
             if (!level.isClientSide) {
-                level.setBlockAndUpdate(pos.above(), state);
-                level.setBlockEntity(blockEntity);
+                level.setBlockAndUpdate(targetPos, state);
+                level.setBlockEntity(newBlockEntity);
 
                 chestSlotItem.shrink(1);
-                level.playSound(null, pos.above(), BPSounds.BACKPACK_PLACE, SoundSource.BLOCKS);
+                level.playSound(null, targetPos, BPSounds.BACKPACK_PLACE, SoundSource.BLOCKS, 1.0F, 1.0F);
+            } else {
+                for (int i = 0; i < 4; i++) {
+                    level.addParticle(ParticleTypes.CLOUD, targetPos.getX() + 0.5D, targetPos.getY() + 0.2D, targetPos.getZ() + 0.5D, 0.0D, 0.02D, 0.0D);
+                }
             }
 
             return InteractionResult.sidedSuccess(level.isClientSide);
@@ -120,15 +130,11 @@ public class BackpackPickupEvents {
                 itemEntity.discard();
                 player.awardStat(Stats.ITEM_PICKED_UP.get(itemStack.getItem()), 1);
                 player.onItemPickup(itemEntity);
+
+                player.level().playSound(null, player.blockPosition(), BPSounds.BACKPACK_EQUIP, SoundSource.PLAYERS, 1.0F, 1.0F);
             }
             return true;
         }
         return false;
-    }
-
-    private static void addParticles(Level level, BlockPos pos) {
-        for (int i = 0; i < 4; i++) {
-            level.addParticle(ParticleTypes.SMOKE, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, 0, 0, 0);
-        }
     }
 }
