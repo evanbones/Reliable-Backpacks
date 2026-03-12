@@ -4,6 +4,7 @@ import com.evandev.reliable_backpacks.networking.BackpackOpenPayload;
 import com.evandev.reliable_backpacks.platform.Services;
 import com.evandev.reliable_backpacks.registry.BPItems;
 import com.evandev.reliable_backpacks.registry.BPSounds;
+import com.evandev.reliable_backpacks.registry.BPTags;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundSource;
@@ -61,6 +62,14 @@ public class BackpackItemContainer extends SimpleContainer {
         Services.PLATFORM.sendToTracking(target, new BackpackOpenPayload(true, target.getId()));
         target.level().playSound(null, target.blockPosition(), BPSounds.BACKPACK_OPEN, SoundSource.PLAYERS);
         super.startOpen(player);
+    }
+
+    @Override
+    public boolean canPlaceItem(int index, ItemStack stack) {
+        if (stack.is(BPTags.BACKPACK_BLACKLIST) || !stack.getItem().canFitInsideContainerItems()) {
+            return false;
+        }
+        return super.canPlaceItem(index, stack);
     }
 
     @Override

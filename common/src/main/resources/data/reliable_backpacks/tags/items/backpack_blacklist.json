@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:shulker_box",
+    {
+      "id": "supplementaries:sack",
+      "required": false
+    }
+  ]
+}

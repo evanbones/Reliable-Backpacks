@@ -6,9 +6,10 @@
   "plugin": "com.moulberry.mixinconstraints.ConstraintsMixinPlugin",
   "refmap": "${mod_id}.refmap.json",
   "mixins": [
-    "SlotMixin",
     "ItemEntityMixin",
-    "LivingEntityMixin"
+    "LivingEntityMixin",
+    "ShulkerBoxSlotMixin",
+    "SlotMixin"
   ],
   "client": [
     "CapeLayerMixin",

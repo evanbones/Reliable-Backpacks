@@ -2,6 +2,7 @@ package com.evandev.reliable_backpacks.common.blocks;
 
 import com.evandev.reliable_backpacks.registry.BPBlockEntities;
 import com.evandev.reliable_backpacks.registry.BPSounds;
+import com.evandev.reliable_backpacks.registry.BPTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
@@ -148,7 +149,17 @@ public class BackpackBlockEntity extends RandomizableContainerBlockEntity {
         }
         tag.putInt("FloatTicks", this.floatTicks);
         tag.putBoolean("NewlyPlaced", this.newlyPlaced);
-        tag.putInt("Color", this.color);
+        if (this.color != 0) {
+            tag.putInt("Color", this.color);
+        }
+    }
+
+    @Override
+    public boolean canPlaceItem(int index, ItemStack stack) {
+        if (stack.is(BPTags.BACKPACK_BLACKLIST) || !stack.getItem().canFitInsideContainerItems()) {
+            return false;
+        }
+        return super.canPlaceItem(index, stack);
     }
 
     @Override
