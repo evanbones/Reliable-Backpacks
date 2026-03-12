@@ -66,7 +66,7 @@ public abstract class ItemEntityMixin extends Entity implements TraceableEntity 
 
             this.setDeltaMovement(this.getDeltaMovement().multiply(0.9, 1.0, 0.9));
             if (this.isInWater() || this.isInLava()) {
-                this.setDeltaMovement(this.getDeltaMovement().add(0.0, 20.0, 0.0));
+                this.setDeltaMovement(this.getDeltaMovement().add(0.0, 0.02, 0.0));
             }
 
             Level level = this.level();
@@ -76,7 +76,7 @@ public abstract class ItemEntityMixin extends Entity implements TraceableEntity 
             boolean isUnobstructed = level.getBlockState(targetPos).canBeReplaced() &&
                     (!level.getFluidState(targetPos).isSource() || !level.getBlockState(targetPos.above()).canBeReplaced());
 
-            if ((!level.getBlockState(pos).is(BlockTags.REPLACEABLE) || level.getFluidState(pos).isSource()) && isUnobstructed) {
+            if ((this.onGround() || level.getFluidState(pos).isSource()) && isUnobstructed) {
 
                 BlockState state = BPBlocks.BACKPACK.defaultBlockState()
                         .setValue(FACING, this.getDirection())
