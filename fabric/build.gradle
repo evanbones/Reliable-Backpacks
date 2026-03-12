@@ -22,7 +22,7 @@ dependencies {
     modCompileOnly "maven.modrinth:figura:${figura_version_fabric}"
     modCompileOnly "maven.modrinth:vanity-core:JaqGYZ32"
 
-    modImplementation "com.moulberry:mixinconstraints:1.0.7"
+    implementation "com.moulberry:mixinconstraints:1.0.7"
     include "com.moulberry:mixinconstraints:1.0.7"
     modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"

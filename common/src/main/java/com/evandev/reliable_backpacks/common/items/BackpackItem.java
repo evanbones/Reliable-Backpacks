@@ -29,7 +29,7 @@ public class BackpackItem extends BlockItem implements Equipable {
     }
 
     public @NotNull SoundEvent getEquipSound() {
-        return BPSounds.BACKPACK_EQUIP.value();
+        return BPSounds.BACKPACK_EQUIP;
     }
 
     @Override

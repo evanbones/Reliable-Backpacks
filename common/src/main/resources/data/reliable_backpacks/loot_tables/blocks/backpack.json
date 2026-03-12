@@ -13,12 +13,24 @@
           "type": "minecraft:item",
           "functions": [
             {
-              "function": "minecraft:copy_components",
-              "include": [
-                "minecraft:custom_name",
-                "minecraft:dyed_color"
-              ],
+              "function": "minecraft:copy_name",
               "source": "block_entity"
+            },
+            {
+              "function": "minecraft:copy_nbt",
+              "source": "block_entity",
+              "ops": [
+                {
+                  "source": "Color",
+                  "target": "display.color",
+                  "op": "replace"
+                },
+                {
+                  "source": "Color",
+                  "target": "BlockEntityTag.Color",
+                  "op": "replace"
+                }
+              ]
             }
           ],
           "name": "reliable_backpacks:backpack"
@@ -26,6 +38,5 @@
       ],
       "rolls": 1.0
     }
-  ],
-  "random_sequence": "reliable_backpacks:blocks/backpack"
+  ]
 }

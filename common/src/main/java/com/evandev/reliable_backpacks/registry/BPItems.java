@@ -2,6 +2,7 @@ package com.evandev.reliable_backpacks.registry;
 
 import com.evandev.reliable_backpacks.Constants;
 import com.evandev.reliable_backpacks.common.items.BackpackItem;
+import com.evandev.reliable_backpacks.platform.Services;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -13,6 +14,8 @@ public class BPItems {
             .fireResistant());
 
     public static void init() {
-        Registry.register(BuiltInRegistries.ITEM, new ResourceLocation(Constants.MOD_ID, "backpack"), BACKPACK);
+        if (Services.PLATFORM.getPlatformName().equals("Fabric")) {
+            Registry.register(BuiltInRegistries.ITEM, new ResourceLocation(Constants.MOD_ID, "backpack"), BACKPACK);
+        }
     }
 }

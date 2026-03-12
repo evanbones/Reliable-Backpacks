@@ -66,7 +66,7 @@ public abstract class ItemEntityMixin extends Entity implements TraceableEntity 
 
             this.setDeltaMovement(this.getDeltaMovement().multiply(0.9, 1.0, 0.9));
             if (this.isInWater() || this.isInLava()) {
-                this.getDeltaMovement().add(0.0, 20.0, 0.0);
+                this.setDeltaMovement(this.getDeltaMovement().add(0.0, 20.0, 0.0));
             }
 
             Level level = this.level();
@@ -90,7 +90,7 @@ public abstract class ItemEntityMixin extends Entity implements TraceableEntity 
                 if (!level.isClientSide) {
                     level.setBlockAndUpdate(pos.above(), state);
                     level.setBlockEntity(blockEntity);
-                    level.playSound(null, pos.above(), BPSounds.BACKPACK_PLACE.value(), SoundSource.BLOCKS);
+                    level.playSound(null, pos.above(), BPSounds.BACKPACK_PLACE, SoundSource.BLOCKS);
                 }
 
                 this.discard();

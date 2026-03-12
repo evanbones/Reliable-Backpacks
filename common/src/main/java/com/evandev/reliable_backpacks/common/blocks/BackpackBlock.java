@@ -2,11 +2,11 @@ package com.evandev.reliable_backpacks.common.blocks;
 
 import com.evandev.reliable_backpacks.registry.BPBlockEntities;
 import com.evandev.reliable_backpacks.registry.BPSounds;
-import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.Containers;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
@@ -90,10 +90,11 @@ public class BackpackBlock extends BaseEntityBlock implements Equipable, EntityB
     }
 
     public @NotNull SoundEvent getEquipSound() {
-        return BPSounds.BACKPACK_EQUIP.value();
+        return BPSounds.BACKPACK_EQUIP;
     }
 
-    protected @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hitResult) {
+    @Override
+    public @NotNull InteractionResult use(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
         if (level.isClientSide) {
             return InteractionResult.SUCCESS;
         } else if (player.isSpectator()) {
@@ -101,10 +102,8 @@ public class BackpackBlock extends BaseEntityBlock implements Equipable, EntityB
         } else {
             BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof BackpackBlockEntity backpackBlockEntity) {
-
                 player.openMenu(backpackBlockEntity);
                 backpackBlockEntity.onOpen(player);
-
                 return InteractionResult.CONSUME;
             } else {
                 return InteractionResult.PASS;
@@ -137,10 +136,6 @@ public class BackpackBlock extends BaseEntityBlock implements Equipable, EntityB
     @Override
     public BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
         return new BackpackBlockEntity(pos, state);
-    }
-
-    public @Nullable MapCodec<? extends BaseEntityBlock> codec() {
-        return null;
     }
 
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {

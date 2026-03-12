@@ -92,7 +92,7 @@ public class BackpackBlockEntity extends RandomizableContainerBlockEntity {
             this.level.blockEvent(this.worldPosition, this.getBlockState().getBlock(), 1, openCount);
             if (this.openCount == 1) {
                 this.level.gameEvent(player, GameEvent.CONTAINER_OPEN, this.worldPosition);
-                this.level.playSound(null, this.getBlockPos(), BPSounds.BACKPACK_OPEN.value(), SoundSource.BLOCKS);
+                this.level.playSound(null, this.getBlockPos(), BPSounds.BACKPACK_OPEN, SoundSource.BLOCKS);
             }
         }
     }
@@ -103,7 +103,7 @@ public class BackpackBlockEntity extends RandomizableContainerBlockEntity {
             this.level.blockEvent(this.worldPosition, this.getBlockState().getBlock(), 1, openCount);
             if (this.openCount <= 0) {
                 this.level.gameEvent(player, GameEvent.CONTAINER_CLOSE, this.worldPosition);
-                this.level.playSound(null, this.getBlockPos(), BPSounds.BACKPACK_CLOSE.value(), SoundSource.BLOCKS);
+                this.level.playSound(null, this.getBlockPos(), BPSounds.BACKPACK_CLOSE, SoundSource.BLOCKS);
             }
         }
     }

@@ -18,7 +18,7 @@ versionRange = "[${forge_version},)"
 ordering = "NONE"
 side = "BOTH"
 
-[[dependencies.${ mod_id }]]
+[[dependencies.${mod_id}]]
 modId = "minecraft"
 mandatory = true
 versionRange = "${minecraft_version_range}"
