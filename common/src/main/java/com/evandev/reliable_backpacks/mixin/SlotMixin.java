@@ -1,12 +1,14 @@
 package com.evandev.reliable_backpacks.mixin;
 
 import com.evandev.reliable_backpacks.registry.BPItems;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -27,13 +29,35 @@ public abstract class SlotMixin {
 
         if (thisSlot.container instanceof Inventory && thisSlot.getContainerSlot() == 38) {
             ItemStack item = this.getItem();
-
-            boolean hasContainer = item.hasTag() && item.getTag().contains("BlockEntityTag");
-            boolean isEmpty = !hasContainer || !item.getTag().getCompound("BlockEntityTag").contains("Items") || item.getTag().getCompound("BlockEntityTag").getList("Items", 10).isEmpty();
-
-            if (item.is(BPItems.BACKPACK) && hasContainer && !isEmpty) {
+            if (isNonEmptyBackpack(item)) {
                 cir.setReturnValue(false);
             }
         }
+    }
+
+    @Inject(
+            method = "mayPlace",
+            at = @At("HEAD"),
+            cancellable = true
+    )
+    public void mayPlace(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
+        Slot thisSlot = (Slot) (Object) this;
+
+        if (thisSlot.container instanceof Inventory) {
+            if (isNonEmptyBackpack(stack)) {
+                cir.setReturnValue(false);
+            }
+        }
+    }
+
+    @Unique
+    private boolean isNonEmptyBackpack(ItemStack stack) {
+        if (!stack.is(BPItems.BACKPACK)) return false;
+
+        boolean hasContainer = stack.hasTag() && stack.getTag().contains("BlockEntityTag");
+        if (!hasContainer) return false;
+
+        CompoundTag bet = stack.getTag().getCompound("BlockEntityTag");
+        return bet.contains("Items") && !bet.getList("Items", 10).isEmpty();
     }
 }
