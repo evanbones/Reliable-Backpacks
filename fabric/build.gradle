@@ -20,7 +20,7 @@ dependencies {
     modCompileOnly "maven.modrinth:iris:${iris_version}-fabric"
     modCompileOnly "maven.modrinth:spyglass-improvements:${spyglass_improvements_version}+fabric"
     modCompileOnly "maven.modrinth:figura:${figura_version_fabric}"
-    modCompileOnly "maven.modrinth:vanity-core:5.0.2"
+    modCompileOnly "maven.modrinth:vanity-core:JaqGYZ32"
 
     modImplementation "com.moulberry:mixinconstraints:1.0.7"
     include "com.moulberry:mixinconstraints:1.0.7"

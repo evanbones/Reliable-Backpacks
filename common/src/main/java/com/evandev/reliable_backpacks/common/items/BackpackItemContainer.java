@@ -4,14 +4,15 @@ import com.evandev.reliable_backpacks.networking.BackpackOpenPayload;
 import com.evandev.reliable_backpacks.platform.Services;
 import com.evandev.reliable_backpacks.registry.BPItems;
 import com.evandev.reliable_backpacks.registry.BPSounds;
-import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,17 +28,31 @@ public class BackpackItemContainer extends SimpleContainer {
         this.player = player;
         this.itemStack = target.getItemBySlot(EquipmentSlot.CHEST);
         this.level = target.level();
+
+        CompoundTag tag = this.itemStack.getTagElement("BlockEntityTag");
+        if (tag != null && tag.contains("Items", 9)) {
+            NonNullList<ItemStack> items = NonNullList.withSize(27, ItemStack.EMPTY);
+            ContainerHelper.loadAllItems(tag, items);
+            for (int i = 0; i < items.size(); i++) {
+                this.setItem(i, items.get(i));
+            }
+        }
     }
 
     public boolean stillValid(@NotNull Player player) {
         return target != null &&
                 itemStack.is(BPItems.BACKPACK) &&
-                itemStack.has(DataComponents.CONTAINER) &&
                 player.distanceTo(target) < 5;
     }
 
+    @Override
     public void setChanged() {
-        target.getItemBySlot(EquipmentSlot.CHEST).set(DataComponents.CONTAINER, ItemContainerContents.fromItems(this.getItems()));
+        CompoundTag tag = target.getItemBySlot(EquipmentSlot.CHEST).getOrCreateTagElement("BlockEntityTag");
+        NonNullList<ItemStack> items = NonNullList.withSize(27, ItemStack.EMPTY);
+        for (int i = 0; i < this.getContainerSize(); i++) {
+            items.set(i, this.getItem(i));
+        }
+        ContainerHelper.saveAllItems(tag, items);
         super.setChanged();
     }
 

@@ -1,7 +1,6 @@
 package com.evandev.reliable_backpacks.common.items;
 
 import com.evandev.reliable_backpacks.registry.BPSounds;
-import net.minecraft.core.Holder;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -12,6 +11,7 @@ import net.minecraft.world.item.Equipable;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import org.jetbrains.annotations.NotNull;
 
 public class BackpackItem extends BlockItem implements Equipable {
     public BackpackItem(Block block, Properties properties) {
@@ -24,16 +24,16 @@ public class BackpackItem extends BlockItem implements Equipable {
     }
 
     @Override
-    public EquipmentSlot getEquipmentSlot() {
+    public @NotNull EquipmentSlot getEquipmentSlot() {
         return EquipmentSlot.CHEST;
     }
 
-    public Holder<SoundEvent> getEquipSound() {
-        return BPSounds.BACKPACK_EQUIP;
+    public @NotNull SoundEvent getEquipSound() {
+        return BPSounds.BACKPACK_EQUIP.value();
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand hand) {
         return this.swapWithEquipmentSlot(this, level, player, hand);
     }
 

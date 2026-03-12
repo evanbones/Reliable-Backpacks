@@ -13,7 +13,7 @@ public class BPBlockEntities {
     public static void init() {
         BACKPACK = Registry.register(
                 BuiltInRegistries.BLOCK_ENTITY_TYPE,
-                ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack"),
+                new ResourceLocation(Constants.MOD_ID, "backpack"),
                 BlockEntityType.Builder.of(BackpackBlockEntity::new, BPBlocks.BACKPACK).build(null)
         );
     }

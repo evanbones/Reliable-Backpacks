@@ -21,7 +21,7 @@ public class BPSounds {
     }
 
     private static Holder<SoundEvent> register(String name) {
-        ResourceLocation id = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, name);
+        ResourceLocation id = new ResourceLocation(Constants.MOD_ID, name);
         return Registry.registerForHolder(BuiltInRegistries.SOUND_EVENT, id, SoundEvent.createVariableRangeEvent(id));
     }
 }

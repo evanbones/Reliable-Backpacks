@@ -23,9 +23,6 @@
     ],
     "modmenu": [
       "com.evandev.reliable_backpacks.compat.ModMenuIntegration"
-    ],
-    "fabric-datagen": [
-      "com.evandev.reliable_backpacks.datagen.TemplateDataGenerator"
     ]
   },
   "mixins": [
@@ -36,6 +33,6 @@
     "fabricloader": ">=0.14",
     "fabric": "*",
     "minecraft": "${minecraft_version}",
-    "java": ">=21"
+    "java": ">=17"
   }
 }

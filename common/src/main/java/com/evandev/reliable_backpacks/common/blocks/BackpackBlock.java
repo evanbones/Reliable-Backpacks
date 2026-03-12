@@ -5,7 +5,6 @@ import com.evandev.reliable_backpacks.registry.BPSounds;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.Holder;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionResult;
@@ -70,14 +69,14 @@ public class BackpackBlock extends BaseEntityBlock implements Equipable, EntityB
                 .setValue(WATERLOGGED, level.getFluidState(pos).getType() == Fluids.WATER);
     }
 
-    protected @NotNull BlockState updateShape(BlockState state, @NotNull Direction facing, @NotNull BlockState facingState, @NotNull LevelAccessor level, @NotNull BlockPos currentPos, @NotNull BlockPos facingPos) {
+    public @NotNull BlockState updateShape(BlockState state, @NotNull Direction facing, @NotNull BlockState facingState, @NotNull LevelAccessor level, @NotNull BlockPos currentPos, @NotNull BlockPos facingPos) {
         if (state.getValue(WATERLOGGED)) {
             level.scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
         }
         return state.setValue(FLOATING, level.getFluidState(currentPos.below()).isSource());
     }
 
-    protected @NotNull FluidState getFluidState(BlockState state) {
+    public @NotNull FluidState getFluidState(BlockState state) {
         return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
     }
 
@@ -90,8 +89,8 @@ public class BackpackBlock extends BaseEntityBlock implements Equipable, EntityB
         return EquipmentSlot.CHEST;
     }
 
-    public @NotNull Holder<SoundEvent> getEquipSound() {
-        return BPSounds.BACKPACK_EQUIP;
+    public @NotNull SoundEvent getEquipSound() {
+        return BPSounds.BACKPACK_EQUIP.value();
     }
 
     protected @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hitResult) {
@@ -113,12 +112,19 @@ public class BackpackBlock extends BaseEntityBlock implements Equipable, EntityB
         }
     }
 
-    protected void onRemove(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState newState, boolean isMoving) {
-        Containers.dropContentsOnDestroy(state, newState, level, pos);
-        super.onRemove(state, level, pos, newState, isMoving);
+    public void onRemove(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState newState, boolean isMoving) {
+        if (!state.is(newState.getBlock())) {
+            BlockEntity blockEntity = level.getBlockEntity(pos);
+            if (blockEntity instanceof BackpackBlockEntity backpackBlockEntity) {
+                Containers.dropContents(level, pos, backpackBlockEntity);
+                level.updateNeighbourForOutputSignal(pos, this);
+            }
+            super.onRemove(state, level, pos, newState, isMoving);
+        }
     }
 
-    protected @NotNull VoxelShape getShape(BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) {
+    @NotNull
+    public VoxelShape getShape(BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) {
         Direction direction = state.getValue(FACING);
         if (state.getValue(FLOATING)) {
             return direction.getAxis() == Direction.Axis.X ? FLOATING_SHAPE_Z : FLOATING_SHAPE_X;
@@ -133,7 +139,7 @@ public class BackpackBlock extends BaseEntityBlock implements Equipable, EntityB
         return new BackpackBlockEntity(pos, state);
     }
 
-    public @NotNull MapCodec<? extends BaseEntityBlock> codec() {
+    public @Nullable MapCodec<? extends BaseEntityBlock> codec() {
         return null;
     }
 

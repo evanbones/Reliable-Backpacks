@@ -1,6 +1,6 @@
 package com.evandev.reliable_backpacks.platform.services;
 
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import com.evandev.reliable_backpacks.networking.BackpackOpenPayload;
 import net.minecraft.world.entity.Entity;
 
 import java.nio.file.Path;
@@ -54,5 +54,5 @@ public interface IPlatformHelper {
     /**
      * Sends a packet to all players tracking the given entity, and the entity itself if it's a player.
      */
-    void sendToTracking(Entity target, CustomPacketPayload payload);
+    void sendToTracking(Entity target, BackpackOpenPayload payload);
 }

@@ -13,6 +13,6 @@ public class BPItems {
             .fireResistant());
 
     public static void init() {
-        Registry.register(BuiltInRegistries.ITEM, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack"), BACKPACK);
+        Registry.register(BuiltInRegistries.ITEM, new ResourceLocation(Constants.MOD_ID, "backpack"), BACKPACK);
     }
 }

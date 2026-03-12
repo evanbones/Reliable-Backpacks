@@ -7,8 +7,7 @@ import com.evandev.reliable_backpacks.client.rendering.BackpackLayer;
 import com.evandev.reliable_backpacks.registry.BPBlockEntities;
 import com.evandev.reliable_backpacks.registry.BPLayers;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
-import net.minecraft.client.resources.PlayerSkin;
-import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.client.event.EntityRenderersEvent;
 
 public class ReliableBackpacksClient {
     public static void registerLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
@@ -23,7 +22,7 @@ public class ReliableBackpacksClient {
     }
 
     public static void addPlayerLayers(EntityRenderersEvent.AddLayers event) {
-        for (PlayerSkin.Model skin : event.getSkins()) {
+        for (String skin : event.getSkins()) {
             if (event.getSkin(skin) instanceof PlayerRenderer playerRenderer) {
                 playerRenderer.addLayer(new BackpackLayer<>(playerRenderer, event.getEntityModels()));
             }

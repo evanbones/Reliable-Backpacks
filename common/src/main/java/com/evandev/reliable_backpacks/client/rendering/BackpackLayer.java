@@ -17,22 +17,23 @@ import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.FastColor;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.DyedItemColor;
 import org.figuramc.figura.avatar.Avatar;
 import org.figuramc.figura.avatar.AvatarManager;
 import org.figuramc.figura.model.ParentType;
 import org.jetbrains.annotations.NotNull;
 import tech.thatgravyboat.vanity.common.item.DesignHelper;
 
+import java.util.Objects;
+
 public class BackpackLayer<T extends LivingEntity, M extends HumanoidModel<T>> extends RenderLayer<T, M> {
-    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "textures/model/backpack.png");
-    private static final ResourceLocation OVERLAY_TEXTURE = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "textures/model/backpack_overlay.png");
+    private static final ResourceLocation TEXTURE = new ResourceLocation(Constants.MOD_ID, "textures/model/backpack.png");
+    private static final ResourceLocation OVERLAY_TEXTURE = new ResourceLocation(Constants.MOD_ID, "textures/model/backpack_overlay.png");
     private final ModelPart backpackModel;
     private final ModelPart otherBackpackModel;
     private final ModelPart parentBody;
@@ -50,7 +51,7 @@ public class BackpackLayer<T extends LivingEntity, M extends HumanoidModel<T>> e
 
         if (shouldRender(itemStack)) {
             if (Services.PLATFORM.isModLoaded("vanity")) {
-                ResourceLocation design = DesignHelper.getStyle(itemStack) != null ? DesignHelper.getStyle(itemStack).getFirst() : null;
+                ResourceLocation design = ResourceLocation.tryParse(Objects.requireNonNull(DesignHelper.getStyle(itemStack)));
                 if (design == null) {
                     this.model = backpackModel;
                 } else {
@@ -111,18 +112,24 @@ public class BackpackLayer<T extends LivingEntity, M extends HumanoidModel<T>> e
         if (copyPose) {
             this.backpackModel.copyFrom(parentBody);
         }
-        VertexConsumer vertexConsumer = ItemRenderer.getArmorFoilBuffer(buffer, RenderType.armorCutoutNoCull(TEXTURE), itemStack.hasFoil());
+        VertexConsumer vertexConsumer = ItemRenderer.getArmorFoilBuffer(buffer, RenderType.armorCutoutNoCull(TEXTURE), false, itemStack.hasFoil());
         this.model.render(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY);
         renderColoredLayer(poseStack, buffer, packedLight, itemStack);
         poseStack.popPose();
     }
 
     private void renderColoredLayer(PoseStack poseStack, MultiBufferSource buffer, int packedLight, ItemStack itemStack) {
-        int i = DyedItemColor.getOrDefault(itemStack, 0);
-        if (FastColor.ARGB32.alpha(i) == 0) return;
+        int i = 0;
+        CompoundTag displayTag = itemStack.getTagElement("display");
+        if (displayTag != null && displayTag.contains("color", 99)) {
+            i = displayTag.getInt("color");
+        }
 
-        VertexConsumer vertexConsumer = ItemRenderer.getArmorFoilBuffer(buffer, RenderType.armorCutoutNoCull(OVERLAY_TEXTURE), itemStack.hasFoil());
-        this.model.render(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, FastColor.ARGB32.opaque(i));
+        if (i == 0) return;
+        int opaqueColor = i | 0xFF000000;
+
+        VertexConsumer vertexConsumer = ItemRenderer.getArmorFoilBuffer(buffer, RenderType.armorCutoutNoCull(OVERLAY_TEXTURE), false, itemStack.hasFoil());
+        this.model.render(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, opaqueColor >> 16 & 255, opaqueColor >> 8 & 255, opaqueColor & 255, opaqueColor >> 24 & 255);
     }
 
     public boolean shouldRender(ItemStack stack) {

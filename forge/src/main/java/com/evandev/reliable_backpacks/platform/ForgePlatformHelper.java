@@ -1,21 +1,22 @@
 package com.evandev.reliable_backpacks.platform;
 
+import com.evandev.reliable_backpacks.ReliableBackpacks;
+import com.evandev.reliable_backpacks.networking.BackpackOpenPayload;
 import com.evandev.reliable_backpacks.platform.services.IPlatformHelper;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.entity.Entity;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.fml.ModList;
-import net.neoforged.fml.loading.FMLLoader;
-import net.neoforged.fml.loading.FMLPaths;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.loading.FMLLoader;
+import net.minecraftforge.fml.loading.FMLPaths;
+import net.minecraftforge.network.PacketDistributor;
 
 import java.nio.file.Path;
 
-public class NeoForgePlatformHelper implements IPlatformHelper {
+public class ForgePlatformHelper implements IPlatformHelper {
 
     @Override
     public String getPlatformName() {
-        return "NeoForge";
+        return "Forge";
     }
 
     @Override
@@ -39,9 +40,9 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
     }
 
     @Override
-    public void sendToTracking(Entity target, CustomPacketPayload payload) {
+    public void sendToTracking(Entity target, BackpackOpenPayload payload) {
         if (!target.level().isClientSide()) {
-            PacketDistributor.sendToPlayersTrackingEntityAndSelf(target, payload);
+            ReliableBackpacks.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> target), payload);
         }
     }
 }

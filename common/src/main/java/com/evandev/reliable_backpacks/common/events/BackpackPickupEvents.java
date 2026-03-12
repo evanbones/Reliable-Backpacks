@@ -6,8 +6,8 @@ import com.evandev.reliable_backpacks.registry.BPItems;
 import com.evandev.reliable_backpacks.registry.BPSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
@@ -19,7 +19,6 @@ import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Equipable;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -27,8 +26,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
-
-import java.util.Objects;
 
 import static com.evandev.reliable_backpacks.common.blocks.BackpackBlock.FACING;
 import static com.evandev.reliable_backpacks.common.blocks.BackpackBlock.WATERLOGGED;
@@ -53,7 +50,8 @@ public class BackpackPickupEvents {
         if (player.isShiftKeyDown() && !hasChestPlate && block == BPBlocks.BACKPACK && blockEntity != null) {
             player.swing(InteractionHand.MAIN_HAND);
             ItemStack itemstack = new ItemStack(BPBlocks.BACKPACK);
-            itemstack.applyComponents(blockEntity.collectComponents());
+            CompoundTag nbt = blockEntity.saveWithoutMetadata();
+            itemstack.addTagElement("BlockEntityTag", nbt);
             player.setItemSlot(EquipmentSlot.CHEST, itemstack);
             addParticles(level, pos);
 
@@ -74,7 +72,10 @@ public class BackpackPickupEvents {
                     .setValue(WATERLOGGED, level.getFluidState(pos.above()).getType() == Fluids.WATER);
 
             blockEntity = new BackpackBlockEntity(pos.above(), state);
-            blockEntity.applyComponentsFromItemStack(chestSlotItem);
+            CompoundTag nbt = chestSlotItem.getTagElement("BlockEntityTag");
+            if (nbt != null) {
+                blockEntity.load(nbt);
+            }
 
             if (!level.isClientSide) {
                 level.setBlockAndUpdate(pos.above(), state);
@@ -109,8 +110,8 @@ public class BackpackPickupEvents {
 
     public static boolean onItemEntityPickup(Player player, ItemEntity itemEntity) {
         ItemStack itemStack = itemEntity.getItem();
-        boolean hasContainer = itemStack.has(DataComponents.CONTAINER);
-        boolean isEmpty = Objects.equals(itemStack.get(DataComponents.CONTAINER), ItemContainerContents.EMPTY);
+        boolean hasContainer = itemStack.hasTag() && itemStack.getTag().contains("BlockEntityTag");
+        boolean isEmpty = !hasContainer || !itemStack.getTag().getCompound("BlockEntityTag").contains("Items") || itemStack.getTag().getCompound("BlockEntityTag").getList("Items", 10).isEmpty();
 
         if (itemStack.is(BPItems.BACKPACK) && hasContainer && !isEmpty) {
             if (player.getItemBySlot(EquipmentSlot.CHEST).isEmpty() && !itemEntity.hasPickUpDelay()) {
@@ -127,7 +128,7 @@ public class BackpackPickupEvents {
 
     private static void addParticles(Level level, BlockPos pos) {
         for (int i = 0; i < 4; i++) {
-            level.addParticle(ParticleTypes.DUST_PLUME, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, 0, 0, 0);
+            level.addParticle(ParticleTypes.SMOKE, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, 0, 0, 0);
         }
     }
 }

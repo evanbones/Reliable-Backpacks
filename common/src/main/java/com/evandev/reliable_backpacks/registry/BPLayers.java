@@ -13,6 +13,6 @@ public class BPLayers {
     public static final ModelLayerLocation OTHER_BACKPACK_BLOCK = getLocation("other_backpack_block");
 
     private static ModelLayerLocation getLocation(String name) {
-        return new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, name), "main");
+        return new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, name), "main");
     }
 }

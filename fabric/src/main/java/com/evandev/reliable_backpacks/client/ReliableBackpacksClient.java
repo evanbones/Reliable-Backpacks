@@ -14,6 +14,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityFeatureRendererRegistrationCallback;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
+import net.minecraft.resources.ResourceLocation;
 
 public class ReliableBackpacksClient implements ClientModInitializer {
     @Override
@@ -25,8 +26,14 @@ public class ReliableBackpacksClient implements ClientModInitializer {
 
         BlockEntityRenderers.register(BPBlockEntities.BACKPACK, BackpackBlockRenderer::new);
 
-        ClientPlayNetworking.registerGlobalReceiver(BackpackOpenPayload.TYPE, (payload, context) -> {
-            BackpackPayloadHandler.handleClientData(payload, context.player());
+        ClientPlayNetworking.registerGlobalReceiver(new ResourceLocation("reliable_backpacks", "backpack_open"), (client, handler, buf, responseSender) -> {
+            boolean isOpen = buf.readBoolean();
+            int id = buf.readInt();
+            BackpackOpenPayload payload = new BackpackOpenPayload(isOpen, id);
+
+            client.execute(() -> {
+                BackpackPayloadHandler.handleClientData(payload, client.player);
+            });
         });
 
         LivingEntityFeatureRendererRegistrationCallback.EVENT.register((entityType, entityRenderer, registrationHelper, context) -> {

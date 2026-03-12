@@ -8,11 +8,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
-
-import static net.minecraft.world.level.block.state.BlockBehaviour.Properties.ofFullCopy;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 
 public class BPBlocks {
-    public static final BackpackBlock BACKPACK = new BackpackBlock(ofFullCopy(Blocks.BROWN_WOOL)
+    public static final BackpackBlock BACKPACK = new BackpackBlock(BlockBehaviour.Properties.copy(Blocks.BROWN_WOOL)
             .sound(new SoundType(1.0F, 1.0F,
                     SoundEvents.WOOL_BREAK,
                     SoundEvents.WOOL_STEP,
@@ -22,6 +21,6 @@ public class BPBlocks {
             .forceSolidOn());
 
     public static void init() {
-        Registry.register(BuiltInRegistries.BLOCK, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack"), BACKPACK);
+        Registry.register(BuiltInRegistries.BLOCK, new ResourceLocation(Constants.MOD_ID, "backpack"), BACKPACK);
     }
 }
