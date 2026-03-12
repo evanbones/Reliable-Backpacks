@@ -55,6 +55,8 @@ public class ReliableBackpacks {
             modEventBus.addListener(ReliableBackpacksClient::registerLayers);
             modEventBus.addListener(ReliableBackpacksClient::registerRenderers);
             modEventBus.addListener(ReliableBackpacksClient::addPlayerLayers);
+            modEventBus.addListener(ReliableBackpacksClient::onClientSetup);
+            modEventBus.addListener(ReliableBackpacksClient::registerItemColors);
         }
 
         MinecraftForge.EVENT_BUS.addListener(this::onRightClickBlock);

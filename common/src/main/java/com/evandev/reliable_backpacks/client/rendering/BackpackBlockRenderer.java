@@ -83,7 +83,7 @@ public class BackpackBlockRenderer implements BlockEntityRenderer<BackpackBlockE
 
         renderBaseLayer(blockEntity, poseStack, buffer, packedLight, packedOverlay);
         if (blockEntity.getColor() != 0) {
-            renderColoredLayer(poseStack, buffer, packedLight, packedOverlay);
+            renderColoredLayer(poseStack, buffer, packedLight, packedOverlay, blockEntity.getColor());
         }
         poseStack.popPose();
     }
@@ -94,13 +94,18 @@ public class BackpackBlockRenderer implements BlockEntityRenderer<BackpackBlockE
         this.base.render(poseStack, vertexConsumer, packedLight, packedOverlay);
     }
 
-    private void renderColoredLayer(PoseStack poseStack, MultiBufferSource buffer, int packedLight, int packedOverlay) {
+    private void renderColoredLayer(PoseStack poseStack, MultiBufferSource buffer, int packedLight, int packedOverlay, int color) {
         if (Services.PLATFORM.isModLoaded("iris")) {
             irisCompatStuff();
         }
 
         VertexConsumer vertexConsumer = buffer.getBuffer(RenderType.entityCutoutNoCull(OVERLAY_TEXTURE));
-        this.base.render(poseStack, vertexConsumer, packedLight, packedOverlay);
+
+        float r = (float) (color >> 16 & 255) / 255.0F;
+        float g = (float) (color >> 8 & 255) / 255.0F;
+        float b = (float) (color & 255) / 255.0F;
+
+        this.base.render(poseStack, vertexConsumer, packedLight, packedOverlay, r, g, b, 1.0F);
     }
 
     private void irisCompatStuff() {

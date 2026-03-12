@@ -37,5 +37,4 @@ public class BackpackItem extends BlockItem implements Equipable, DyeableLeather
     public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand hand) {
         return this.swapWithEquipmentSlot(this, level, player, hand);
     }
-
 }

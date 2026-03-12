@@ -33,6 +33,7 @@ import java.util.Objects;
 
 public class BackpackLayer<T extends LivingEntity, M extends HumanoidModel<T>> extends RenderLayer<T, M> {
     private static final ResourceLocation TEXTURE = new ResourceLocation(Constants.MOD_ID, "textures/model/backpack.png");
+    private static final ResourceLocation BASE_TEXTURE = new ResourceLocation(Constants.MOD_ID, "textures/model/backpack_base.png");
     private static final ResourceLocation OVERLAY_TEXTURE = new ResourceLocation(Constants.MOD_ID, "textures/model/backpack_overlay.png");
     private final ModelPart backpackModel;
     private final ModelPart otherBackpackModel;
@@ -108,11 +109,18 @@ public class BackpackLayer<T extends LivingEntity, M extends HumanoidModel<T>> e
             lidRot = (float) -Math.pow(2, t - 10) * Mth.sin((t - 10.75F) * 0.5F);
         }
 
+        int color = 0;
+        CompoundTag displayTag = itemStack.getTagElement("display");
+        if (displayTag != null && displayTag.contains("color", 99)) {
+            color = displayTag.getInt("color");
+        }
+        ResourceLocation texture = color == 0 ? TEXTURE : BASE_TEXTURE;
+
         this.model.getChild("base").getChild("lid").xRot = lidRot;
         if (copyPose) {
             this.backpackModel.copyFrom(parentBody);
         }
-        VertexConsumer vertexConsumer = ItemRenderer.getArmorFoilBuffer(buffer, RenderType.armorCutoutNoCull(TEXTURE), false, itemStack.hasFoil());
+        VertexConsumer vertexConsumer = ItemRenderer.getArmorFoilBuffer(buffer, RenderType.armorCutoutNoCull(texture), false, itemStack.hasFoil());
         this.model.render(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY);
         renderColoredLayer(poseStack, buffer, packedLight, itemStack);
         poseStack.popPose();
@@ -126,10 +134,13 @@ public class BackpackLayer<T extends LivingEntity, M extends HumanoidModel<T>> e
         }
 
         if (i == 0) return;
-        int opaqueColor = i | 0xFF000000;
+
+        float r = (float) (i >> 16 & 255) / 255.0F;
+        float g = (float) (i >> 8 & 255) / 255.0F;
+        float b = (float) (i & 255) / 255.0F;
 
         VertexConsumer vertexConsumer = ItemRenderer.getArmorFoilBuffer(buffer, RenderType.armorCutoutNoCull(OVERLAY_TEXTURE), false, itemStack.hasFoil());
-        this.model.render(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, opaqueColor >> 16 & 255, opaqueColor >> 8 & 255, opaqueColor & 255, opaqueColor >> 24 & 255);
+        this.model.render(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, r, g, b, 1.0F);
     }
 
     public boolean shouldRender(ItemStack stack) {
