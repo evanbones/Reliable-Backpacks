@@ -55,6 +55,11 @@ public class BackpackPickupEvents {
             ItemStack itemstack = new ItemStack(BPBlocks.BACKPACK);
             CompoundTag nbt = blockEntity.saveWithoutMetadata();
             itemstack.addTagElement("BlockEntityTag", nbt);
+
+            if (blockEntity instanceof BackpackBlockEntity backpackEntity && backpackEntity.getColor() != 0) {
+                itemstack.getOrCreateTagElement("display").putInt("color", backpackEntity.getColor());
+            }
+
             player.setItemSlot(EquipmentSlot.CHEST, itemstack);
 
             if (!level.isClientSide) {
@@ -67,7 +72,7 @@ public class BackpackPickupEvents {
         }
 
         // PLACEMENT
-        if (player.isShiftKeyDown() && heldItem.isEmpty() && hasBackpack && hitResult.getDirection() == Direction.UP && !isAbove && isUnobstructed) {
+        if (player.isShiftKeyDown() && heldItem.isEmpty() && hasBackpack && (hitResult.getDirection() == Direction.UP || clickedState.canBeReplaced()) && !isAbove && isUnobstructed) {
             player.swing(InteractionHand.MAIN_HAND);
 
             BlockState state = BPBlocks.BACKPACK.defaultBlockState()
@@ -78,6 +83,11 @@ public class BackpackPickupEvents {
             CompoundTag nbt = chestSlotItem.getTagElement("BlockEntityTag");
             if (nbt != null) {
                 newBlockEntity.load(nbt);
+            }
+
+            CompoundTag displayTag = chestSlotItem.getTagElement("display");
+            if (displayTag != null && displayTag.contains("color", 99)) {
+                newBlockEntity.setColor(displayTag.getInt("color"));
             }
 
             newBlockEntity.newlyPlaced = true;

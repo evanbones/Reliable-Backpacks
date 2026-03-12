@@ -4,13 +4,16 @@ import com.evandev.reliable_backpacks.registry.BPBlockEntities;
 import com.evandev.reliable_backpacks.registry.BPSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Equipable;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -131,6 +134,17 @@ public class BackpackBlock extends BaseEntityBlock implements Equipable, EntityB
             return direction.getAxis() == Direction.Axis.X ? SHAPE_Z : SHAPE_X;
         }
 
+    }
+
+    @Override
+    public void setPlacedBy(@NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState state, @Nullable LivingEntity placer, @NotNull ItemStack stack) {
+        super.setPlacedBy(level, pos, state, placer, stack);
+        if (level.getBlockEntity(pos) instanceof BackpackBlockEntity blockEntity) {
+            CompoundTag display = stack.getTagElement("display");
+            if (display != null && display.contains("color", 99)) {
+                blockEntity.setColor(display.getInt("color"));
+            }
+        }
     }
 
     @Override

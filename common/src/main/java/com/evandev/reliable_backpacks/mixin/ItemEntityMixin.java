@@ -89,6 +89,11 @@ public abstract class ItemEntityMixin extends Entity implements TraceableEntity 
                     blockEntity.load(nbt);
                 }
 
+                CompoundTag displayTag = itemStack.getTagElement("display");
+                if (displayTag != null && displayTag.contains("color", 99)) {
+                    blockEntity.setColor(displayTag.getInt("color"));
+                }
+
                 blockEntity.newlyPlaced = true;
                 blockEntity.placeTicks = 0;
 
