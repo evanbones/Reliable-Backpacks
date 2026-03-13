@@ -2,6 +2,7 @@ package com.evandev.reliable_backpacks.common.blocks;
 
 import com.evandev.reliable_backpacks.registry.BPBlockEntities;
 import com.evandev.reliable_backpacks.registry.BPSounds;
+import com.evandev.reliable_backpacks.registry.BPTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
@@ -20,18 +21,19 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.*;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import org.jetbrains.annotations.NotNull;
 
 public class BackpackBlockEntity extends RandomizableContainerBlockEntity {
-    private NonNullList<ItemStack> itemStacks;
     public int openTicks;
     public boolean newlyPlaced;
     public int placeTicks;
     public int floatTicks;
     public boolean open;
+    private NonNullList<ItemStack> itemStacks;
     private int openCount;
     private int color;
 
@@ -41,6 +43,28 @@ public class BackpackBlockEntity extends RandomizableContainerBlockEntity {
         this.newlyPlaced = true;
     }
 
+    public static void tick(Level level, BlockPos pos, BlockState state, BackpackBlockEntity blockEntity) {
+        if (blockEntity.open && blockEntity.openTicks < 10) {
+            ++blockEntity.openTicks;
+        }
+        if (!blockEntity.open && blockEntity.openTicks > 0) {
+            --blockEntity.openTicks;
+        }
+
+        if (blockEntity.newlyPlaced && blockEntity.placeTicks < 20) {
+            ++blockEntity.placeTicks;
+        }
+        if (blockEntity.placeTicks == 20) {
+            blockEntity.newlyPlaced = false;
+        }
+
+        if (blockEntity.floatTicks < 90) {
+            ++blockEntity.floatTicks;
+        }
+        if (blockEntity.floatTicks == 90) {
+            blockEntity.floatTicks = 0;
+        }
+    }
 
     public int getColor() {
         return color;
@@ -49,25 +73,18 @@ public class BackpackBlockEntity extends RandomizableContainerBlockEntity {
     public boolean triggerEvent(int id, int type) {
         if (id == 1) {
             openCount = type;
-            if (openCount == 0) { openTicks = 10; }
-            if (openCount == 1) { openTicks = 0; }
+            if (openCount == 0) {
+                openTicks = 10;
+            }
+            if (openCount == 1) {
+                openTicks = 0;
+            }
             open = openCount > 0;
             level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
             return true;
         } else {
             return super.triggerEvent(id, type);
         }
-    }
-
-    public static void tick(Level level, BlockPos pos, BlockState state, BackpackBlockEntity blockEntity) {
-        if (blockEntity.open && blockEntity.openTicks < 10) { ++blockEntity.openTicks; }
-        if (!blockEntity.open && blockEntity.openTicks > 0) { --blockEntity.openTicks; }
-
-        if (blockEntity.newlyPlaced && blockEntity.placeTicks < 20) { ++blockEntity.placeTicks; }
-        if (blockEntity.placeTicks == 20) { blockEntity.newlyPlaced = false; }
-
-        if (blockEntity.floatTicks < 90) { ++blockEntity.floatTicks; }
-        if (blockEntity.floatTicks == 90) { blockEntity.floatTicks = 0; }
     }
 
     public void onOpen(Player player) {
@@ -162,6 +179,14 @@ public class BackpackBlockEntity extends RandomizableContainerBlockEntity {
         this.floatTicks = tag.getInt("FloatTicks");
         this.newlyPlaced = tag.getBoolean("NewlyPlaced");
         this.color = tag.getInt("Color");
+    }
+
+    @Override
+    public boolean canPlaceItem(int index, ItemStack stack) {
+        if (stack.is(BPTags.BACKPACK_BLACKLIST) || !stack.getItem().canFitInsideContainerItems()) {
+            return false;
+        }
+        return super.canPlaceItem(index, stack);
     }
 
     public int getContainerSize() {

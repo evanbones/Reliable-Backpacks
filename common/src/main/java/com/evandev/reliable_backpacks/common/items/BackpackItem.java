@@ -10,8 +10,12 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Equipable;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
+import org.jetbrains.annotations.NotNull;
 
 public class BackpackItem extends BlockItem implements Equipable {
     public BackpackItem(Block block, Properties properties) {
@@ -24,17 +28,23 @@ public class BackpackItem extends BlockItem implements Equipable {
     }
 
     @Override
-    public EquipmentSlot getEquipmentSlot() {
+    public @NotNull EquipmentSlot getEquipmentSlot() {
         return EquipmentSlot.CHEST;
     }
 
-    public Holder<SoundEvent> getEquipSound() {
+    public @NotNull Holder<SoundEvent> getEquipSound() {
         return BPSounds.BACKPACK_EQUIP;
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, Player player, @NotNull InteractionHand hand) {
+        ItemStack itemStack = player.getItemInHand(hand);
+        BlockHitResult blockHitResult = getPlayerPOVHitResult(level, player, ClipContext.Fluid.NONE);
+
+        if (blockHitResult.getType() == HitResult.Type.BLOCK && level.getBlockState(blockHitResult.getBlockPos()).canBeReplaced()) {
+            return InteractionResultHolder.pass(itemStack);
+        }
+
         return this.swapWithEquipmentSlot(this, level, player, hand);
     }
-
 }

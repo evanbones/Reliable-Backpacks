@@ -12,6 +12,7 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.registries.RegisterEvent;
@@ -23,10 +24,13 @@ public class ReliableBackpacks {
     public ReliableBackpacks(IEventBus modEventBus, ModContainer modContainer) {
         modEventBus.addListener(this::onRegister);
         modEventBus.addListener(this::registerNetworking);
+        modEventBus.addListener(this::addCreative);
 
         if (FMLEnvironment.dist.isClient()) {
             ClientConfigSetup.register(modContainer);
             modEventBus.addListener(ReliableBackpacksClient::registerLayers);
+            modEventBus.addListener(ReliableBackpacksClient::registerItemColors);
+            modEventBus.addListener(ReliableBackpacksClient::onClientSetup);
             modEventBus.addListener(ReliableBackpacksClient::registerRenderers);
             modEventBus.addListener(ReliableBackpacksClient::addPlayerLayers);
         }
@@ -56,6 +60,12 @@ public class ReliableBackpacks {
         if (result != InteractionResult.PASS) {
             event.setCanceled(true);
             event.setCancellationResult(result);
+        }
+    }
+
+    private void addCreative(BuildCreativeModeTabContentsEvent event) {
+        if (event.getTabKey() == net.minecraft.world.item.CreativeModeTabs.TOOLS_AND_UTILITIES) {
+            event.accept(com.evandev.reliable_backpacks.registry.BPItems.BACKPACK);
         }
     }
 
