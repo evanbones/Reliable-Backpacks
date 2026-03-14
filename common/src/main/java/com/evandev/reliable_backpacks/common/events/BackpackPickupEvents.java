@@ -1,6 +1,7 @@
 package com.evandev.reliable_backpacks.common.events;
 
 import com.evandev.reliable_backpacks.common.blocks.BackpackBlockEntity;
+import com.evandev.reliable_backpacks.platform.Services;
 import com.evandev.reliable_backpacks.registry.BPBlocks;
 import com.evandev.reliable_backpacks.registry.BPItems;
 import com.evandev.reliable_backpacks.registry.BPSounds;
@@ -39,10 +40,10 @@ public class BackpackPickupEvents {
         BlockEntity blockEntity = level.getBlockEntity(pos);
 
         ItemStack heldItem = player.getItemInHand(hand);
-        ItemStack chestSlotItem = player.getItemBySlot(EquipmentSlot.CHEST);
+        ItemStack chestSlotItem = Services.PLATFORM.getBackpack(player);
 
-        boolean hasBackpack = chestSlotItem.is(BPItems.BACKPACK);
-        boolean hasChestPlate = !chestSlotItem.isEmpty();
+        boolean hasBackpack = !chestSlotItem.isEmpty();
+        boolean canEquip = Services.PLATFORM.canEquipBackpack(player);
 
         BlockPos targetPos = clickedState.canBeReplaced() ? pos : pos.relative(hitResult.getDirection());
         boolean isAbove = (targetPos.getY() > player.getEyeY());
@@ -50,7 +51,7 @@ public class BackpackPickupEvents {
                 CollisionContext.of(player)) && level.getBlockState(targetPos).canBeReplaced();
 
         // PICKUP
-        if (player.isShiftKeyDown() && !hasChestPlate && block == BPBlocks.BACKPACK && blockEntity != null) {
+        if (player.isShiftKeyDown() && canEquip && !hasBackpack && block == BPBlocks.BACKPACK && blockEntity != null) {
             player.swing(InteractionHand.MAIN_HAND);
             ItemStack itemstack = new ItemStack(BPBlocks.BACKPACK);
 
@@ -67,7 +68,7 @@ public class BackpackPickupEvents {
                 itemstack.getOrCreateTagElement("display").putInt("color", backpackEntity.getColor());
             }
 
-            player.setItemSlot(EquipmentSlot.CHEST, itemstack);
+            Services.PLATFORM.equipBackpack(player, itemstack);
 
             if (!level.isClientSide) {
                 level.removeBlockEntity(pos);
@@ -112,7 +113,7 @@ public class BackpackPickupEvents {
                 level.setBlockAndUpdate(targetPos, state);
                 level.setBlockEntity(newBlockEntity);
 
-                chestSlotItem.shrink(1);
+                Services.PLATFORM.unequipBackpack(player);
                 level.playSound(null, targetPos, BPSounds.BACKPACK_PLACE, SoundSource.BLOCKS, 1.0F, 1.0F);
             } else {
                 for (int i = 0; i < 4; i++) {
@@ -137,7 +138,7 @@ public class BackpackPickupEvents {
             slot = ((Equipable) item).getEquipmentSlot();
         }
 
-        if (slot == EquipmentSlot.CHEST && player.getItemBySlot(EquipmentSlot.CHEST).is(BPItems.BACKPACK)) {
+        if (slot == EquipmentSlot.CHEST && !Services.PLATFORM.getBackpack(player).isEmpty()) {
             return InteractionResult.FAIL;
         }
         return InteractionResult.PASS;
@@ -149,8 +150,8 @@ public class BackpackPickupEvents {
         boolean isEmpty = !hasContainer || !itemStack.getTag().getCompound("BlockEntityTag").contains("Items") || itemStack.getTag().getCompound("BlockEntityTag").getList("Items", 10).isEmpty();
 
         if (itemStack.is(BPItems.BACKPACK) && hasContainer && !isEmpty) {
-            if (player.getItemBySlot(EquipmentSlot.CHEST).isEmpty() && !itemEntity.hasPickUpDelay()) {
-                player.setItemSlot(EquipmentSlot.CHEST, itemStack);
+            if (Services.PLATFORM.canEquipBackpack(player) && !itemEntity.hasPickUpDelay()) {
+                Services.PLATFORM.equipBackpack(player, itemStack);
                 player.take(itemEntity, 1);
                 itemEntity.discard();
                 player.awardStat(Stats.ITEM_PICKED_UP.get(itemStack.getItem()), 1);

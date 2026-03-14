@@ -20,7 +20,6 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import org.figuramc.figura.avatar.Avatar;
@@ -48,7 +47,7 @@ public class BackpackLayer<T extends LivingEntity, M extends HumanoidModel<T>> e
     }
 
     public void render(@NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int packedLight, T livingEntity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float headYaw, float headPitch) {
-        ItemStack itemStack = livingEntity.getItemBySlot(EquipmentSlot.CHEST);
+        ItemStack itemStack = Services.PLATFORM.getBackpack(livingEntity);
 
         if (shouldRender(itemStack)) {
             if (Services.PLATFORM.isModLoaded("vanity")) {

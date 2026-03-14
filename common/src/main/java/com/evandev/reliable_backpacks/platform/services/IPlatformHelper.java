@@ -2,6 +2,7 @@ package com.evandev.reliable_backpacks.platform.services;
 
 import com.evandev.reliable_backpacks.networking.BackpackOpenPayload;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.ItemStack;
 
 import java.nio.file.Path;
 
@@ -55,4 +56,9 @@ public interface IPlatformHelper {
      * Sends a packet to all players tracking the given entity, and the entity itself if it's a player.
      */
     void sendToTracking(Entity target, BackpackOpenPayload payload);
+
+    ItemStack getBackpack(net.minecraft.world.entity.LivingEntity entity);
+    boolean canEquipBackpack(net.minecraft.world.entity.LivingEntity entity);
+    boolean equipBackpack(net.minecraft.world.entity.LivingEntity entity, net.minecraft.world.item.ItemStack stack);
+    void unequipBackpack(net.minecraft.world.entity.LivingEntity entity);
 }

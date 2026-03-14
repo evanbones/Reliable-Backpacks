@@ -1,7 +1,9 @@
 package com.evandev.reliable_backpacks.platform;
 
+import com.evandev.reliable_backpacks.compat.TrinketsCompat;
 import com.evandev.reliable_backpacks.networking.BackpackOpenPayload;
 import com.evandev.reliable_backpacks.platform.services.IPlatformHelper;
+import com.evandev.reliable_backpacks.registry.BPItems;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
@@ -11,6 +13,9 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
 
 import java.nio.file.Path;
 
@@ -54,6 +59,40 @@ public class FabricPlatformHelper implements IPlatformHelper {
             if (target instanceof ServerPlayer serverPlayer) {
                 ServerPlayNetworking.send(serverPlayer, packetId, buf);
             }
+        }
+    }
+
+    @Override
+    public ItemStack getBackpack(LivingEntity entity) {
+        if (isModLoaded("trinkets")) {
+            ItemStack trinket = TrinketsCompat.getBackpack(entity);
+            if (!trinket.isEmpty()) return trinket;
+        }
+        ItemStack chest = entity.getItemBySlot(EquipmentSlot.CHEST);
+        return chest.is(BPItems.BACKPACK) ? chest : ItemStack.EMPTY;
+    }
+
+    @Override
+    public boolean canEquipBackpack(LivingEntity entity) {
+        if (isModLoaded("trinkets") && TrinketsCompat.canEquipBackpack(entity)) return true;
+        return entity.getItemBySlot(EquipmentSlot.CHEST).isEmpty();
+    }
+
+    @Override
+    public boolean equipBackpack(LivingEntity entity, ItemStack stack) {
+        if (isModLoaded("trinkets") && TrinketsCompat.equipBackpack(entity, stack)) return true;
+        if (entity.getItemBySlot(EquipmentSlot.CHEST).isEmpty()) {
+            entity.setItemSlot(EquipmentSlot.CHEST, stack);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void unequipBackpack(LivingEntity entity) {
+        if (isModLoaded("trinkets") && TrinketsCompat.unequipBackpack(entity)) return;
+        if (entity.getItemBySlot(EquipmentSlot.CHEST).is(BPItems.BACKPACK)) {
+            entity.setItemSlot(EquipmentSlot.CHEST, ItemStack.EMPTY);
         }
     }
 }

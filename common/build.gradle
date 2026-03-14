@@ -19,7 +19,7 @@ legacyForge {
 
 dependencies {
     compileOnly "me.shedaniel.cloth:cloth-config-forge:${cloth_config_version}"
-
+    compileOnly "top.theillusivec4.curios:curios-forge:${curios_version}:api"
     compileOnly "maven.modrinth:oculus:${oculus_version}"
     compileOnly "maven.modrinth:spyglass-improvements:${spyglass_improvements_version}+forge"
     compileOnly "maven.modrinth:figura:${figura_version_forge}"

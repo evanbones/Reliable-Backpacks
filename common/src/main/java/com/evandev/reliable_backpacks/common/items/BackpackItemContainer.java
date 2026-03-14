@@ -27,7 +27,7 @@ public class BackpackItemContainer extends SimpleContainer {
         super(27);
         this.target = target;
         this.player = player;
-        this.itemStack = target.getItemBySlot(EquipmentSlot.CHEST);
+        this.itemStack = Services.PLATFORM.getBackpack(target);
         this.level = target.level();
 
         CompoundTag tag = this.itemStack.getTagElement("BlockEntityTag");
@@ -41,14 +41,12 @@ public class BackpackItemContainer extends SimpleContainer {
     }
 
     public boolean stillValid(@NotNull Player player) {
-        return target != null &&
-                itemStack.is(BPItems.BACKPACK) &&
-                player.distanceTo(target) < 5;
+        return target != null && !Services.PLATFORM.getBackpack(target).isEmpty() && player.distanceTo(target) < 5;
     }
 
     @Override
     public void setChanged() {
-        CompoundTag tag = target.getItemBySlot(EquipmentSlot.CHEST).getOrCreateTagElement("BlockEntityTag");
+        CompoundTag tag = Services.PLATFORM.getBackpack(target).getOrCreateTagElement("BlockEntityTag");
         NonNullList<ItemStack> items = NonNullList.withSize(27, ItemStack.EMPTY);
         for (int i = 0; i < this.getContainerSize(); i++) {
             items.set(i, this.getItem(i));
