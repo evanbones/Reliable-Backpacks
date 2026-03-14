@@ -84,16 +84,16 @@ public abstract class ItemEntityMixin extends Entity implements TraceableEntity 
 
                 BackpackBlockEntity blockEntity = new BackpackBlockEntity(targetPos, state);
 
+                CompoundTag nbt = itemStack.getTagElement("BlockEntityTag");
+                if (nbt != null) {
+                    blockEntity.load(nbt);
+                }
+
                 CompoundTag itemTag = itemStack.getTag();
                 if (itemTag != null) {
                     CompoundTag copy = itemTag.copy();
                     copy.remove("BlockEntityTag");
                     blockEntity.setBackpackItemTag(copy);
-                }
-
-                CompoundTag nbt = itemStack.getTagElement("BlockEntityTag");
-                if (nbt != null) {
-                    blockEntity.load(nbt);
                 }
 
                 CompoundTag displayTag = itemStack.getTagElement("display");
