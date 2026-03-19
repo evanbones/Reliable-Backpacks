@@ -1,16 +1,13 @@
 package com.evandev.reliable_backpacks;
 
-import com.evandev.reliable_backpacks.client.ClientConfigSetup;
 import com.evandev.reliable_backpacks.client.ReliableBackpacksClient;
 import com.evandev.reliable_backpacks.common.events.BackpackPickupEvents;
 import com.evandev.reliable_backpacks.common.events.EntityInteractionEvents;
 import com.evandev.reliable_backpacks.networking.BackpackOpenPayload;
-import com.evandev.reliable_backpacks.networking.BackpackPayloadHandler;
 import com.evandev.reliable_backpacks.registry.BPBlockEntities;
 import com.evandev.reliable_backpacks.registry.BPBlocks;
 import com.evandev.reliable_backpacks.registry.BPItems;
 import com.evandev.reliable_backpacks.registry.BPSounds;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -25,7 +22,6 @@ import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
@@ -50,14 +46,7 @@ public class ReliableBackpacks {
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::addCreative);
 
-        if (FMLEnvironment.dist.isClient()) {
-            ClientConfigSetup.register();
-            modEventBus.addListener(ReliableBackpacksClient::registerLayers);
-            modEventBus.addListener(ReliableBackpacksClient::registerRenderers);
-            modEventBus.addListener(ReliableBackpacksClient::addPlayerLayers);
-            modEventBus.addListener(ReliableBackpacksClient::onClientSetup);
-            modEventBus.addListener(ReliableBackpacksClient::registerItemColors);
-        }
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ReliableBackpacksClient.init(modEventBus));
 
         MinecraftForge.EVENT_BUS.addListener(this::onRightClickBlock);
         MinecraftForge.EVENT_BUS.addListener(this::onRightClickItem);
@@ -97,7 +86,7 @@ public class ReliableBackpacks {
                     NetworkEvent.Context ctx = ctxSupplier.get();
                     ctx.enqueueWork(() -> {
                         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
-                            BackpackPayloadHandler.handleClientData(payload, Minecraft.getInstance().player);
+                            ReliableBackpacksClient.handleBackpackOpenPayload(payload);
                         });
                     });
                     ctx.setPacketHandled(true);

@@ -5,18 +5,31 @@ import com.evandev.reliable_backpacks.client.models.BackpackModel;
 import com.evandev.reliable_backpacks.client.models.variants.OtherBackpackModel;
 import com.evandev.reliable_backpacks.client.rendering.BackpackBlockRenderer;
 import com.evandev.reliable_backpacks.client.rendering.BackpackLayer;
+import com.evandev.reliable_backpacks.networking.BackpackOpenPayload;
+import com.evandev.reliable_backpacks.networking.BackpackPayloadHandler;
 import com.evandev.reliable_backpacks.registry.BPBlockEntities;
 import com.evandev.reliable_backpacks.registry.BPItems;
 import com.evandev.reliable_backpacks.registry.BPLayers;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.DyeableLeatherItem;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.RegisterColorHandlersEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
 public class ReliableBackpacksClient {
+    public static void init(IEventBus modEventBus) {
+        ClientConfigSetup.register();
+        modEventBus.addListener(ReliableBackpacksClient::registerLayers);
+        modEventBus.addListener(ReliableBackpacksClient::registerRenderers);
+        modEventBus.addListener(ReliableBackpacksClient::addPlayerLayers);
+        modEventBus.addListener(ReliableBackpacksClient::onClientSetup);
+        modEventBus.addListener(ReliableBackpacksClient::registerItemColors);
+    }
+
     public static void registerLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
         event.registerLayerDefinition(BPLayers.BACKPACK, BackpackModel::createBodyLayer);
         event.registerLayerDefinition(BPLayers.BACKPACK_BLOCK, BackpackModel::createBlockLayer);
@@ -53,5 +66,9 @@ public class ReliableBackpacksClient {
                     }
             );
         });
+    }
+
+    public static void handleBackpackOpenPayload(BackpackOpenPayload payload) {
+        BackpackPayloadHandler.handleClientData(payload, Minecraft.getInstance().player);
     }
 }

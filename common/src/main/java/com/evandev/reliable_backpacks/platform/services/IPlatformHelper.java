@@ -2,6 +2,7 @@ package com.evandev.reliable_backpacks.platform.services;
 
 import com.evandev.reliable_backpacks.networking.BackpackOpenPayload;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 
 import java.nio.file.Path;
@@ -48,6 +49,7 @@ public interface IPlatformHelper {
 
     /**
      * Checks if the code is running on the physical client.
+     *
      * @return True if on the client, false if on a dedicated server.
      */
     boolean isPhysicalClient();
@@ -57,8 +59,14 @@ public interface IPlatformHelper {
      */
     void sendToTracking(Entity target, BackpackOpenPayload payload);
 
-    ItemStack getBackpack(net.minecraft.world.entity.LivingEntity entity);
-    boolean canEquipBackpack(net.minecraft.world.entity.LivingEntity entity);
-    boolean equipBackpack(net.minecraft.world.entity.LivingEntity entity, net.minecraft.world.item.ItemStack stack);
-    void unequipBackpack(net.minecraft.world.entity.LivingEntity entity);
+    ItemStack getBackpack(LivingEntity entity);
+
+    boolean canEquipBackpack(LivingEntity entity);
+
+    boolean equipBackpack(LivingEntity entity, ItemStack stack);
+
+    void unequipBackpack(LivingEntity entity);
+
+    default void handleBackpackOpenPayload(BackpackOpenPayload payload) {
+    }
 }
