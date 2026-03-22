@@ -26,7 +26,7 @@ public class BackpackItemContainer extends SimpleContainer {
         super(27);
         this.target = target;
         this.player = player;
-        this.itemStack = target.getItemBySlot(EquipmentSlot.CHEST);
+        this.itemStack = Services.PLATFORM.getEquippedBackpack(target);
         this.level = target.level();
     }
 
@@ -38,7 +38,7 @@ public class BackpackItemContainer extends SimpleContainer {
     }
 
     public void setChanged() {
-        target.getItemBySlot(EquipmentSlot.CHEST).set(DataComponents.CONTAINER, ItemContainerContents.fromItems(this.getItems()));
+        Services.PLATFORM.getEquippedBackpack(target).set(DataComponents.CONTAINER, ItemContainerContents.fromItems(this.getItems()));
         super.setChanged();
     }
 

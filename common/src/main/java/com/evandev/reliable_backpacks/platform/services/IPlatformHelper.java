@@ -2,6 +2,9 @@ package com.evandev.reliable_backpacks.platform.services;
 
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 
 import java.nio.file.Path;
 
@@ -55,4 +58,24 @@ public interface IPlatformHelper {
      * Sends a packet to all players tracking the given entity, and the entity itself if it's a player.
      */
     void sendToTracking(Entity target, CustomPacketPayload payload);
+
+    /**
+     * Checks if the given player can equip a backpack.
+     */
+    boolean canEquipBackpack(Player player);
+
+    /**
+     * Equips a backpack to the given player.
+     */
+    void equipBackpack(Player player, ItemStack stack);
+
+    /**
+     * Checks if the player has a backpack equipped in any slot (Chest or Accessories).
+     */
+    boolean isBackpackEquipped(LivingEntity livingEntity);
+
+    /**
+     * Gets the equipped backpack stack from the player.
+     */
+    ItemStack getEquippedBackpack(LivingEntity livingEntity);
 }

@@ -44,10 +44,16 @@ dependencies {
     // Cloth Config
     implementation "me.shedaniel.cloth:cloth-config-neoforge:${cloth_config_version}"
 
+    // Accessories
+    implementation "maven.modrinth:accessories:${accessories_version_neoforge}"
+    runtimeOnly "maven.modrinth:owo-lib:NMCHU6DZ"
+
+    // Optional Dependencies
     compileOnly "maven.modrinth:iris:${iris_version}-neoforge"
     compileOnly "maven.modrinth:spyglass-improvements:${spyglass_improvements_version}+neoforge"
     compileOnly "maven.modrinth:figura:${figura_version_neoforge}"
     compileOnly "maven.modrinth:vanity-core:5.0.2"
+
     jarJar(implementation("com.moulberry:mixinconstraints:1.0.7") {
         exclude group: "org.slf4j",
                 module: "slf4j-api"

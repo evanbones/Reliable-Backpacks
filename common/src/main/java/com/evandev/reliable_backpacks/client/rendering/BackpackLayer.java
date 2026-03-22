@@ -20,7 +20,6 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.DyedItemColor;
@@ -45,8 +44,8 @@ public class BackpackLayer<T extends LivingEntity, M extends HumanoidModel<T>> e
         this.parentBody = this.getParentBody();
     }
 
-    public void render(@NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int packedLight, T livingEntity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float headYaw, float headPitch) {
-        ItemStack itemStack = livingEntity.getItemBySlot(EquipmentSlot.CHEST);
+    public void render(@NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int packedLight, @NotNull T livingEntity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float headYaw, float headPitch) {
+        ItemStack itemStack = Services.PLATFORM.getEquippedBackpack(livingEntity);
 
         if (shouldRender(itemStack)) {
             if (Services.PLATFORM.isModLoaded("vanity")) {

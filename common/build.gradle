@@ -23,6 +23,8 @@ dependencies {
     compileOnly "maven.modrinth:spyglass-improvements:1.5.7+mc1.21+neoforge"
     compileOnly "maven.modrinth:figura:yXFi1fed"
     compileOnly "maven.modrinth:vanity-core:5.0.2"
+    compileOnly "maven.modrinth:accessories:${accessories_version_neoforge}"
+
     compileOnly "com.moulberry:mixinconstraints:1.0.7"
     compileOnly group: 'org.spongepowered', name: 'mixin', version: '0.8.5'
     compileOnly group: 'org.ow2.asm', name: 'asm-tree', version: '9.6'
