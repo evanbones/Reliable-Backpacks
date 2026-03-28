@@ -118,7 +118,9 @@ public class BackpackPickupEvents {
 
         if (itemStack.is(BPItems.BACKPACK) && hasContainer && !isEmpty) {
             if (Services.PLATFORM.canEquipBackpack(player) && !itemEntity.hasPickUpDelay()) {
-                Services.PLATFORM.equipBackpack(player, itemStack);
+                Services.PLATFORM.equipBackpack(player, itemStack.copy());
+                itemStack.shrink(1);
+
                 player.take(itemEntity, 1);
                 itemEntity.discard();
                 player.awardStat(Stats.ITEM_PICKED_UP.get(itemStack.getItem()), 1);
