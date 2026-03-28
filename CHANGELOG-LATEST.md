@@ -1,3 +1,3 @@
 ### Fixed
 
-- Fixed crash on Forge servers.
+- Fixed duplication bug.

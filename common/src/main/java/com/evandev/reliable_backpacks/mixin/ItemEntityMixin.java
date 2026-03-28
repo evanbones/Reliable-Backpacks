@@ -40,8 +40,12 @@ public abstract class ItemEntityMixin extends Entity implements TraceableEntity 
 
     @Inject(method = "playerTouch", at = @At("HEAD"), cancellable = true)
     public void onPlayerTouch(Player player, CallbackInfo ci) {
-        if (!this.level().isClientSide() && BackpackPickupEvents.onItemEntityPickup(player, (ItemEntity) (Object) this)) {
-            ci.cancel();
+        if (!this.level().isClientSide()) {
+            BackpackPickupEvents.onItemEntityPickup(player, (ItemEntity) (Object) this);
+
+            if (this.isRemoved()) {
+                ci.cancel();
+            }
         }
     }
 
