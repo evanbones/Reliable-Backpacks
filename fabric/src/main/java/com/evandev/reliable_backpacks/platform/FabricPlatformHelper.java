@@ -47,7 +47,7 @@ public class FabricPlatformHelper implements IPlatformHelper {
 
     @Override
     public void sendToTracking(Entity target, BackpackOpenPayload payload) {
-        if (!target.level().isClientSide()) {
+        if (!target.getLevel().isClientSide()) {
             FriendlyByteBuf buf = PacketByteBufs.create();
             buf.writeBoolean(payload.isOpen());
             buf.writeInt(payload.id());

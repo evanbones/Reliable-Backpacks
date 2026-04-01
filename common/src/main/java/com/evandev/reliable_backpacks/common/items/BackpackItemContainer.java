@@ -28,7 +28,7 @@ public class BackpackItemContainer extends SimpleContainer {
         this.target = target;
         this.player = player;
         this.itemStack = Services.PLATFORM.getBackpack(target);
-        this.level = target.level();
+        this.level = target.getLevel();
 
         CompoundTag tag = this.itemStack.getTagElement("BlockEntityTag");
         if (tag != null && tag.contains("Items", 9)) {
@@ -58,7 +58,7 @@ public class BackpackItemContainer extends SimpleContainer {
     @Override
     public void startOpen(@NotNull Player player) {
         Services.PLATFORM.sendToTracking(target, new BackpackOpenPayload(true, target.getId()));
-        target.level().playSound(null, target.blockPosition(), BPSounds.BACKPACK_OPEN, SoundSource.PLAYERS);
+        target.getLevel().playSound(null, target.blockPosition(), BPSounds.BACKPACK_OPEN, SoundSource.PLAYERS, 1.0F, 1.0F);
         super.startOpen(player);
     }
 
@@ -73,7 +73,7 @@ public class BackpackItemContainer extends SimpleContainer {
     @Override
     public void stopOpen(@NotNull Player player) {
         Services.PLATFORM.sendToTracking(target, new BackpackOpenPayload(false, target.getId()));
-        target.level().playSound(null, target.blockPosition(), BPSounds.BACKPACK_CLOSE, SoundSource.PLAYERS);
+        target.getLevel().playSound(null, target.blockPosition(), BPSounds.BACKPACK_CLOSE, SoundSource.PLAYERS, 1.0F, 1.0F);
         super.stopOpen(player);
     }
 }

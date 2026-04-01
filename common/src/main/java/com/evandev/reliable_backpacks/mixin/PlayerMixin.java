@@ -19,7 +19,7 @@ public abstract class PlayerMixin {
     @Inject(method = "tick", at = @At("TAIL"))
     public void onTick(CallbackInfo ci) {
         Player player = (Player) (Object) this;
-        if (player.level().isClientSide()) return;
+        if (player.getLevel().isClientSide()) return;
 
         for (int i = 0; i < player.getInventory().items.size(); i++) {
             ItemStack stack = player.getInventory().items.get(i);
@@ -34,7 +34,7 @@ public abstract class PlayerMixin {
     private void handleEjectedBackpack(Player player, ItemStack stack) {
         if (Services.PLATFORM.canEquipBackpack(player)) {
             Services.PLATFORM.equipBackpack(player, stack);
-            player.level().playSound(null, player.blockPosition(), BPSounds.BACKPACK_EQUIP, SoundSource.PLAYERS, 1.0F, 1.0F);
+            player.getLevel().playSound(null, player.blockPosition(), BPSounds.BACKPACK_EQUIP, SoundSource.PLAYERS, 1.0F, 1.0F);
         } else {
             player.drop(stack, true, false);
         }

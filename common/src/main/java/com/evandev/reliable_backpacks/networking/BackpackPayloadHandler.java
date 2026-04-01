@@ -9,7 +9,7 @@ public class BackpackPayloadHandler {
     public static void handleClientData(final BackpackOpenPayload payload, Player player) {
         if (player == null) return;
 
-        Entity entity = player.level().getEntity(payload.id());
+        Entity entity = player.getLevel().getEntity(payload.id());
         if (entity instanceof BackpackWearer backpackWearer) {
             if (payload.isOpen()) {
                 backpackWearer.onBackpackOpen();

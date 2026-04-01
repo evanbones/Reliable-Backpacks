@@ -12,6 +12,7 @@ dependencies {
 
     // Trinkets
     modImplementation "dev.emi:trinkets:${trinkets_version}"
+    modImplementation "dev.onyxstudios.cardinal-components-api:cardinal-components-base:5.0.2"
 
     // EMI
     modImplementation "dev.emi:emi-fabric:${emi_version}"

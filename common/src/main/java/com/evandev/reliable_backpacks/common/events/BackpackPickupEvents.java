@@ -41,10 +41,10 @@ public class BackpackPickupEvents {
         boolean hasBackpack = !chestSlotItem.isEmpty();
         boolean canEquip = Services.PLATFORM.canEquipBackpack(player);
 
-        BlockPos targetPos = clickedState.canBeReplaced() ? pos : pos.relative(hitResult.getDirection());
+        BlockPos targetPos = clickedState.getMaterial().isReplaceable() ? pos : pos.relative(hitResult.getDirection());
         boolean isAbove = (targetPos.getY() > player.getEyeY());
         boolean isUnobstructed = level.isUnobstructed(BPBlocks.BACKPACK.defaultBlockState(), targetPos,
-                CollisionContext.of(player)) && level.getBlockState(targetPos).canBeReplaced();
+                CollisionContext.of(player)) && level.getBlockState(targetPos).getMaterial().isReplaceable();
 
         // PICKUP
         if (player.isShiftKeyDown() && canEquip && !hasBackpack && block == BPBlocks.BACKPACK && blockEntity != null) {
@@ -76,7 +76,7 @@ public class BackpackPickupEvents {
         }
 
         // PLACEMENT
-        if (player.isShiftKeyDown() && heldItem.isEmpty() && hasBackpack && (hitResult.getDirection() == Direction.UP || clickedState.canBeReplaced()) && !isAbove && isUnobstructed) {
+        if (player.isShiftKeyDown() && heldItem.isEmpty() && hasBackpack && (hitResult.getDirection() == Direction.UP || clickedState.getMaterial().isReplaceable()) && !isAbove && isUnobstructed) {
             player.swing(InteractionHand.MAIN_HAND);
 
             BlockState state = BPBlocks.BACKPACK.defaultBlockState()
@@ -146,7 +146,7 @@ public class BackpackPickupEvents {
                 player.awardStat(Stats.ITEM_PICKED_UP.get(itemStack.getItem()), 1);
                 player.onItemPickup(itemEntity);
 
-                player.level().playSound(null, player.blockPosition(), BPSounds.BACKPACK_EQUIP, SoundSource.PLAYERS, 1.0F, 1.0F);
+                player.getLevel().playSound(null, player.blockPosition(), BPSounds.BACKPACK_EQUIP, SoundSource.PLAYERS, 1.0F, 1.0F);
             }
             return true;
         }

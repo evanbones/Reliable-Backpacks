@@ -12,7 +12,6 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Equipable;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -29,7 +28,7 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -39,7 +38,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class BackpackBlock extends BaseEntityBlock implements Equipable, EntityBlock, SimpleWaterloggedBlock {
+public class BackpackBlock extends BaseEntityBlock implements EntityBlock, SimpleWaterloggedBlock {
     public static final DirectionProperty FACING;
     public static final BooleanProperty FLOATING;
     public static final BooleanProperty WATERLOGGED;
@@ -90,14 +89,6 @@ public class BackpackBlock extends BaseEntityBlock implements Equipable, EntityB
     @Nullable
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@NotNull Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> type) {
         return createTickerHelper(type, BPBlockEntities.BACKPACK, BackpackBlockEntity::tick);
-    }
-
-    public @NotNull EquipmentSlot getEquipmentSlot() {
-        return EquipmentSlot.CHEST;
-    }
-
-    public @NotNull SoundEvent getEquipSound() {
-        return BPSounds.BACKPACK_EQUIP;
     }
 
     @Override
@@ -180,7 +171,7 @@ public class BackpackBlock extends BaseEntityBlock implements Equipable, EntityB
     }
 
     @Override
-    public @NotNull List<ItemStack> getDrops(@NotNull BlockState state, @NotNull LootParams.Builder builder) {
+    public @NotNull List<ItemStack> getDrops(@NotNull BlockState state, @NotNull LootContext.Builder builder) {
         List<ItemStack> drops = super.getDrops(state, builder);
         BlockEntity blockEntity = builder.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
 

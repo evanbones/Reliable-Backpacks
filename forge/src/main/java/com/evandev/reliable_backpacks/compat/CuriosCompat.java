@@ -7,15 +7,15 @@ import top.theillusivec4.curios.api.CuriosApi;
 import top.theillusivec4.curios.api.SlotResult;
 
 public class CuriosCompat {
+
     public static ItemStack getBackpack(LivingEntity entity) {
-        return CuriosApi.getCuriosInventory(entity).resolve()
-                .flatMap(handler -> handler.findFirstCurio(BPItems.BACKPACK))
+        return CuriosApi.getCuriosHelper().findFirstCurio(entity, BPItems.BACKPACK)
                 .map(SlotResult::stack)
                 .orElse(ItemStack.EMPTY);
     }
 
     public static boolean canEquipBackpack(LivingEntity entity) {
-        return CuriosApi.getCuriosInventory(entity).resolve().map(handler -> {
+        return CuriosApi.getCuriosHelper().getCuriosHandler(entity).resolve().map(handler -> {
             var backHandler = handler.getCurios().get("back");
             if (backHandler != null) {
                 for (int i = 0; i < backHandler.getSlots(); i++) {
@@ -27,7 +27,7 @@ public class CuriosCompat {
     }
 
     public static boolean equipBackpack(LivingEntity entity, ItemStack stack) {
-        return CuriosApi.getCuriosInventory(entity).resolve().map(handler -> {
+        return CuriosApi.getCuriosHelper().getCuriosHandler(entity).resolve().map(handler -> {
             var backHandler = handler.getCurios().get("back");
             if (backHandler != null) {
                 for (int i = 0; i < backHandler.getSlots(); i++) {
@@ -42,15 +42,18 @@ public class CuriosCompat {
     }
 
     public static boolean unequipBackpack(LivingEntity entity) {
-        return CuriosApi.getCuriosInventory(entity).resolve()
-                .flatMap(handler -> handler.findFirstCurio(BPItems.BACKPACK))
+        return CuriosApi.getCuriosHelper().findFirstCurio(entity, BPItems.BACKPACK)
                 .map(slotResult -> {
                     var id = slotResult.slotContext().identifier();
                     var index = slotResult.slotContext().index();
-                    var handler2 = CuriosApi.getCuriosInventory(entity).resolve().get().getCurios().get(id);
-                    if (handler2 != null) {
-                        handler2.getStacks().setStackInSlot(index, ItemStack.EMPTY);
-                        return true;
+
+                    var optionalHandler = CuriosApi.getCuriosHelper().getCuriosHandler(entity).resolve();
+                    if (optionalHandler.isPresent()) {
+                        var handler2 = optionalHandler.get().getCurios().get(id);
+                        if (handler2 != null) {
+                            handler2.getStacks().setStackInSlot(index, ItemStack.EMPTY);
+                            return true;
+                        }
                     }
                     return false;
                 }).orElse(false);

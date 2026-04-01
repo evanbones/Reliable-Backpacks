@@ -1,3 +1,1 @@
-### Fixed
-
-- Fixed duplication bug.
+- Ported to 1.19.2.

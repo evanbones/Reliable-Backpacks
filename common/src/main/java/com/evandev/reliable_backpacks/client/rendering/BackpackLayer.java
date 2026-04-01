@@ -7,7 +7,7 @@ import com.evandev.reliable_backpacks.registry.BPItems;
 import com.evandev.reliable_backpacks.registry.BPLayers;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Axis;
+import com.mojang.math.Vector3f;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.model.geom.ModelPart;
@@ -80,8 +80,8 @@ public class BackpackLayer<T extends LivingEntity, M extends HumanoidModel<T>> e
             boolean shouldRender = (avatar.luaRuntime != null && avatar.luaRuntime.vanilla_model.CHESTPLATE.getVisible() != null) ? avatar.luaRuntime.vanilla_model.CHESTPLATE.getVisible() : true;
             boolean render = avatar.pivotPartRender(ParentType.ChestplatePivot, (stack) -> {
                 stack.scale(16.0F, 16.0F, 16.0F);
-                stack.mulPose(Axis.XP.rotationDegrees(180.0F));
-                stack.mulPose(Axis.YP.rotationDegrees(180.0F));
+                stack.mulPose(Vector3f.XP.rotationDegrees(180.0F));
+                stack.mulPose(Vector3f.YP.rotationDegrees(180.0F));
                 renderBaseLayer(stack, buffer, packedLight, livingEntity, partialTicks, itemStack, false);
             });
             if (!render && shouldRender) {

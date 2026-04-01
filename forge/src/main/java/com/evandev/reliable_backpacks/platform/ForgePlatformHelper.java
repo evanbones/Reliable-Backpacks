@@ -46,7 +46,7 @@ public class ForgePlatformHelper implements IPlatformHelper {
 
     @Override
     public void sendToTracking(Entity target, BackpackOpenPayload payload) {
-        if (!target.level().isClientSide()) {
+        if (!target.getLevel().isClientSide()) {
             ReliableBackpacks.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> target), payload);
         }
     }

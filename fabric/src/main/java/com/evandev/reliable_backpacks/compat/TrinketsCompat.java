@@ -2,6 +2,7 @@ package com.evandev.reliable_backpacks.compat;
 
 import com.evandev.reliable_backpacks.registry.BPItems;
 import dev.emi.trinkets.api.TrinketsApi;
+import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 
@@ -9,7 +10,7 @@ public class TrinketsCompat {
     public static ItemStack getBackpack(LivingEntity entity) {
         return TrinketsApi.getTrinketComponent(entity)
                 .flatMap(comp -> comp.getEquipped(BPItems.BACKPACK).stream().findFirst())
-                .map(tuple -> tuple.getB())
+                .map(Tuple::getB)
                 .orElse(ItemStack.EMPTY);
     }
 

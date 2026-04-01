@@ -10,7 +10,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.TraceableEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -26,7 +25,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import static com.evandev.reliable_backpacks.common.blocks.BackpackBlock.*;
 
 @Mixin(value = ItemEntity.class)
-public abstract class ItemEntityMixin extends Entity implements TraceableEntity {
+public abstract class ItemEntityMixin extends Entity {
 
     public ItemEntityMixin(EntityType<?> entityType, Level level) {
         super(entityType, level);
@@ -40,7 +39,7 @@ public abstract class ItemEntityMixin extends Entity implements TraceableEntity 
 
     @Inject(method = "playerTouch", at = @At("HEAD"), cancellable = true)
     public void onPlayerTouch(Player player, CallbackInfo ci) {
-        if (!this.level().isClientSide()) {
+        if (!this.getLevel().isClientSide()) {
             BackpackPickupEvents.onItemEntityPickup(player, (ItemEntity) (Object) this);
 
             if (this.isRemoved()) {
@@ -72,14 +71,14 @@ public abstract class ItemEntityMixin extends Entity implements TraceableEntity 
                 this.setDeltaMovement(this.getDeltaMovement().add(0.0, 0.02, 0.0));
             }
 
-            Level level = this.level();
+            Level level = this.getLevel();
             BlockPos pos = this.blockPosition();
-            BlockPos targetPos = level.getBlockState(pos).canBeReplaced() ? pos : pos.above();
+            BlockPos targetPos = level.getBlockState(pos).getMaterial().isReplaceable() ? pos : pos.above();
 
-            boolean isUnobstructed = level.getBlockState(targetPos).canBeReplaced() &&
-                    (!level.getFluidState(targetPos).isSource() || !level.getBlockState(targetPos.above()).canBeReplaced());
+            boolean isUnobstructed = level.getBlockState(targetPos).getMaterial().isReplaceable() &&
+                    (!level.getFluidState(targetPos).isSource() || !level.getBlockState(targetPos.above()).getMaterial().isReplaceable());
 
-            if ((this.onGround() || level.getFluidState(pos).isSource()) && isUnobstructed) {
+            if ((this.isOnGround() || level.getFluidState(pos).isSource()) && isUnobstructed) {
 
                 BlockState state = BPBlocks.BACKPACK.defaultBlockState()
                         .setValue(FACING, this.getDirection())

@@ -3,14 +3,10 @@ package com.evandev.reliable_backpacks.client.rendering;
 import com.evandev.reliable_backpacks.Constants;
 import com.evandev.reliable_backpacks.common.blocks.BackpackBlock;
 import com.evandev.reliable_backpacks.common.blocks.BackpackBlockEntity;
-import com.evandev.reliable_backpacks.platform.Services;
 import com.evandev.reliable_backpacks.registry.BPLayers;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Axis;
-import net.irisshaders.iris.shaderpack.materialmap.NamespacedId;
-import net.irisshaders.iris.shaderpack.materialmap.WorldRenderingSettings;
-import net.irisshaders.iris.uniforms.CapturedRenderingState;
+import com.mojang.math.Vector3f;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -45,7 +41,7 @@ public class BackpackBlockRenderer implements BlockEntityRenderer<BackpackBlockE
         float basePosY = 24;
 
         poseStack.translate(0.5F, 0.5F, 0.5F);
-        poseStack.mulPose(Axis.YP.rotationDegrees(-dir));
+        poseStack.mulPose(Vector3f.YP.rotationDegrees(-dir));
         poseStack.scale(1.0F, -1.0F, -1.0F);
         poseStack.translate(0.0F, isFloating ? -0.8F : -1.0F, 0.0F);
 
@@ -95,10 +91,6 @@ public class BackpackBlockRenderer implements BlockEntityRenderer<BackpackBlockE
     }
 
     private void renderColoredLayer(PoseStack poseStack, MultiBufferSource buffer, int packedLight, int packedOverlay, int color) {
-        if (Services.PLATFORM.isModLoaded("iris")) {
-            irisCompatStuff();
-        }
-
         VertexConsumer vertexConsumer = buffer.getBuffer(RenderType.entityCutoutNoCull(OVERLAY_TEXTURE));
 
         float r = (float) (color >> 16 & 255) / 255.0F;
@@ -106,11 +98,5 @@ public class BackpackBlockRenderer implements BlockEntityRenderer<BackpackBlockE
         float b = (float) (color & 255) / 255.0F;
 
         this.base.render(poseStack, vertexConsumer, packedLight, packedOverlay, r, g, b, 1.0F);
-    }
-
-    private void irisCompatStuff() {
-        if (WorldRenderingSettings.INSTANCE.getItemIds() != null) {
-            CapturedRenderingState.INSTANCE.setCurrentRenderedItem(WorldRenderingSettings.INSTANCE.getItemIds().applyAsInt(new NamespacedId(BackpackBlockRenderer.OVERLAY_TEXTURE.getNamespace(), BackpackBlockRenderer.OVERLAY_TEXTURE.getPath())));
-        }
     }
 }

@@ -19,12 +19,12 @@ public class EntityInteractionEvents {
         ItemStack item = target != null ? Services.PLATFORM.getBackpack(target) : ItemStack.EMPTY;
 
         if (target != null && !item.isEmpty() && isBehind(player, target)) {
-            if (!player.level().isClientSide()) {
+            if (!player.getLevel().isClientSide()) {
                 BackpackItemContainer container = new BackpackItemContainer(target, player);
                 player.openMenu(new SimpleMenuProvider((a, b, c) -> new ShulkerBoxMenu(a, player.getInventory(), container), Component.translatable("container.backpack")));
             }
 
-            return InteractionResult.sidedSuccess(player.level().isClientSide());
+            return InteractionResult.sidedSuccess(player.getLevel().isClientSide());
         }
         return InteractionResult.PASS;
     }
