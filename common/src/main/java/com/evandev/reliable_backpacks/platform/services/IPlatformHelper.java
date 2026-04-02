@@ -69,4 +69,8 @@ public interface IPlatformHelper {
 
     default void handleBackpackOpenPayload(BackpackOpenPayload payload) {
     }
+
+    default boolean isBackpackVisible(LivingEntity entity) {
+        return true;
+    }
 }

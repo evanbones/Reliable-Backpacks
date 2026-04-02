@@ -49,7 +49,7 @@ public class BackpackLayer<T extends LivingEntity, M extends HumanoidModel<T>> e
     public void render(@NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int packedLight, T livingEntity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float headYaw, float headPitch) {
         ItemStack itemStack = Services.PLATFORM.getBackpack(livingEntity);
 
-        if (shouldRender(itemStack)) {
+        if (shouldRender(itemStack) && Services.PLATFORM.isBackpackVisible(livingEntity)) {
             if (Services.PLATFORM.isModLoaded("vanity")) {
                 ResourceLocation design = ResourceLocation.tryParse(Objects.requireNonNull(DesignHelper.getStyle(itemStack)));
                 if (design == null) {
