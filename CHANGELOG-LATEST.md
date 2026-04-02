@@ -1,3 +1,3 @@
 ### Fixed
 
-- Fixed Back slot still registering with Curios integration disabled on 1.19.2.
+- Fixed Backpack animation sometimes not playing.
