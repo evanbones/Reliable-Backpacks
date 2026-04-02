@@ -3,6 +3,7 @@ package com.evandev.reliable_backpacks;
 import com.evandev.reliable_backpacks.client.ReliableBackpacksClient;
 import com.evandev.reliable_backpacks.common.events.BackpackPickupEvents;
 import com.evandev.reliable_backpacks.common.events.EntityInteractionEvents;
+import com.evandev.reliable_backpacks.compat.CuriosCompat;
 import com.evandev.reliable_backpacks.networking.BackpackOpenPayload;
 import com.evandev.reliable_backpacks.registry.BPBlockEntities;
 import com.evandev.reliable_backpacks.registry.BPBlocks;
@@ -15,8 +16,10 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.NetworkRegistry;
@@ -38,6 +41,7 @@ public class ReliableBackpacks {
     public ReliableBackpacks() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
+        modEventBus.addListener(this::enqueueIMC);
         modEventBus.addListener(this::onRegister);
         modEventBus.addListener(this::commonSetup);
 
@@ -110,6 +114,12 @@ public class ReliableBackpacks {
         if (result != InteractionResult.PASS) {
             event.setCanceled(true);
             event.setCancellationResult(result);
+        }
+    }
+
+    private void enqueueIMC(final InterModEnqueueEvent event) {
+        if (ModList.get().isLoaded("curios")) {
+            CuriosCompat.registerSlot();
         }
     }
 }

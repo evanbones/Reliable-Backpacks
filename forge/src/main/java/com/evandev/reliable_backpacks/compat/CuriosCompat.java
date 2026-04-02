@@ -13,6 +13,11 @@ import java.util.Set;
 
 public class CuriosCompat {
 
+    public static void registerSlot() {
+        InterModComms.sendTo("curios", SlotTypeMessage.REGISTER_TYPE,
+                () -> SlotTypePreset.BACK.getMessageBuilder().build());
+    }
+
     public static ItemStack getBackpack(LivingEntity entity) {
         return CuriosApi.getCuriosHelper().findFirstCurio(entity, BPItems.BACKPACK)
                 .map(SlotResult::stack)
