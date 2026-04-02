@@ -21,6 +21,12 @@ public class ModConfig {
     @SerializedName("enabled")
     public boolean enabled = true;
 
+    @SerializedName("enable_curios_integration")
+    public boolean enableCuriosIntegration = true;
+
+    @SerializedName("enable_trinkets_integration")
+    public boolean enableTrinketsIntegration = true;
+
     @SerializedName("missing_id_map")
     public Map<String, String> missingIdMap = new HashMap<>();
 

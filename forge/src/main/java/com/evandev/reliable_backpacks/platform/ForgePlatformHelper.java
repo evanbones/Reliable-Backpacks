@@ -2,6 +2,7 @@ package com.evandev.reliable_backpacks.platform;
 
 import com.evandev.reliable_backpacks.ReliableBackpacks;
 import com.evandev.reliable_backpacks.compat.CuriosCompat;
+import com.evandev.reliable_backpacks.config.ModConfig;
 import com.evandev.reliable_backpacks.networking.BackpackOpenPayload;
 import com.evandev.reliable_backpacks.platform.services.IPlatformHelper;
 import com.evandev.reliable_backpacks.registry.BPItems;
@@ -53,7 +54,7 @@ public class ForgePlatformHelper implements IPlatformHelper {
 
     @Override
     public ItemStack getBackpack(LivingEntity entity) {
-        if (isModLoaded("curios")) {
+        if (ModConfig.get().enableCuriosIntegration && isModLoaded("curios")) {
             ItemStack curio = CuriosCompat.getBackpack(entity);
             if (!curio.isEmpty()) return curio;
         }
@@ -63,13 +64,13 @@ public class ForgePlatformHelper implements IPlatformHelper {
 
     @Override
     public boolean canEquipBackpack(LivingEntity entity) {
-        if (isModLoaded("curios") && CuriosCompat.canEquipBackpack(entity)) return true;
+        if (ModConfig.get().enableCuriosIntegration && isModLoaded("curios") && CuriosCompat.canEquipBackpack(entity)) return true;
         return entity.getItemBySlot(EquipmentSlot.CHEST).isEmpty();
     }
 
     @Override
     public boolean equipBackpack(LivingEntity entity, ItemStack stack) {
-        if (isModLoaded("curios") && CuriosCompat.equipBackpack(entity, stack)) return true;
+        if (ModConfig.get().enableCuriosIntegration && isModLoaded("curios") && CuriosCompat.equipBackpack(entity, stack)) return true;
         if (entity.getItemBySlot(EquipmentSlot.CHEST).isEmpty()) {
             entity.setItemSlot(EquipmentSlot.CHEST, stack);
             return true;
@@ -79,9 +80,17 @@ public class ForgePlatformHelper implements IPlatformHelper {
 
     @Override
     public void unequipBackpack(LivingEntity entity) {
-        if (isModLoaded("curios") && CuriosCompat.unequipBackpack(entity)) return;
+        if (ModConfig.get().enableCuriosIntegration && isModLoaded("curios") && CuriosCompat.unequipBackpack(entity)) return;
         if (entity.getItemBySlot(EquipmentSlot.CHEST).is(BPItems.BACKPACK)) {
             entity.setItemSlot(EquipmentSlot.CHEST, ItemStack.EMPTY);
         }
+    }
+
+    @Override
+    public boolean isBackpackVisible(LivingEntity entity) {
+        if (ModConfig.get().enableCuriosIntegration && isModLoaded("curios")) {
+            return CuriosCompat.isBackpackVisible(entity);
+        }
+        return true;
     }
 }
