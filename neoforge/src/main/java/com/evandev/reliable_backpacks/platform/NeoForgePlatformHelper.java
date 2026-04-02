@@ -1,7 +1,8 @@
 package com.evandev.reliable_backpacks.platform;
 
-import com.evandev.reliable_backpacks.platform.services.IPlatformHelper;
 import com.evandev.reliable_backpacks.compat.AccessoriesHelper;
+import com.evandev.reliable_backpacks.config.ModConfig;
+import com.evandev.reliable_backpacks.platform.services.IPlatformHelper;
 import com.evandev.reliable_backpacks.registry.BPItems;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.entity.Entity;
@@ -16,7 +17,6 @@ import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.nio.file.Path;
-import java.util.List;
 
 public class NeoForgePlatformHelper implements IPlatformHelper {
 
@@ -54,7 +54,7 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
 
     @Override
     public boolean canEquipBackpack(Player player) {
-        if (isModLoaded("accessories")) {
+        if (ModConfig.get().enableAccessoriesIntegration && isModLoaded("accessories")) {
             if (AccessoriesHelper.canEquipBackpack(player)) return true;
         }
         return player.getItemBySlot(EquipmentSlot.CHEST).isEmpty();
@@ -62,7 +62,7 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
 
     @Override
     public void equipBackpack(Player player, ItemStack stack) {
-        if (isModLoaded("accessories")) {
+        if (ModConfig.get().enableAccessoriesIntegration && isModLoaded("accessories")) {
             if (AccessoriesHelper.equipBackpack(player, stack)) return;
         }
         player.setItemSlot(EquipmentSlot.CHEST, stack);
@@ -78,9 +78,20 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
         if (livingEntity.getItemBySlot(EquipmentSlot.CHEST).is(BPItems.BACKPACK)) {
             return livingEntity.getItemBySlot(EquipmentSlot.CHEST);
         }
-        if (isModLoaded("accessories")) {
+        if (ModConfig.get().enableAccessoriesIntegration && isModLoaded("accessories")) {
             return AccessoriesHelper.getEquippedBackpack(livingEntity);
         }
         return ItemStack.EMPTY;
+    }
+
+    @Override
+    public boolean isBackpackVisible(LivingEntity livingEntity) {
+        if (livingEntity.getItemBySlot(EquipmentSlot.CHEST).is(BPItems.BACKPACK)) {
+            return true;
+        }
+        if (ModConfig.get().enableAccessoriesIntegration && isModLoaded("accessories")) {
+            return AccessoriesHelper.isBackpackVisible(livingEntity);
+        }
+        return true;
     }
 }

@@ -78,4 +78,9 @@ public interface IPlatformHelper {
      * Gets the equipped backpack stack from the player.
      */
     ItemStack getEquippedBackpack(LivingEntity livingEntity);
+
+    /**
+     * Checks if the equipped backpack should be rendered (e.g. not hidden by Accessories toggle).
+     */
+    boolean isBackpackVisible(LivingEntity livingEntity);
 }

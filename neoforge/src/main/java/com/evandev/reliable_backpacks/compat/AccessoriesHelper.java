@@ -61,4 +61,19 @@ public class AccessoriesHelper {
         }
         return ItemStack.EMPTY;
     }
+
+    public static boolean isBackpackVisible(LivingEntity livingEntity) {
+        AccessoriesCapability capability = AccessoriesCapability.get(livingEntity);
+        if (capability != null) {
+            List<SlotEntryReference> equipped = capability.getEquipped(BPItems.BACKPACK);
+            if (!equipped.isEmpty()) {
+                SlotReference ref = equipped.getFirst().reference();
+                AccessoriesContainer container = ref.slotContainer();
+                if (container != null) {
+                    return container.shouldRender(ref.slot());
+                }
+            }
+        }
+        return true;
+    }
 }

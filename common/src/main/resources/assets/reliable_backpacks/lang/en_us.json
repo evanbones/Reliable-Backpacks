@@ -1,4 +1,5 @@
 {
   "block.reliable_backpacks.backpack": "Backpack",
-  "container.backpack": "Backpack"
+  "container.backpack": "Backpack",
+  "config.reliable_backpacks.enable_accessories_integration": "Enable Accessories Integration"
 }

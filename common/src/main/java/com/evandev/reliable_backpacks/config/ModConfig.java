@@ -21,6 +21,9 @@ public class ModConfig {
     @SerializedName("enabled")
     public boolean enabled = true;
 
+    @SerializedName("enable_accessories_integration")
+    public boolean enableAccessoriesIntegration = true;
+
     @SerializedName("missing_id_map")
     public Map<String, String> missingIdMap = new HashMap<>();
 

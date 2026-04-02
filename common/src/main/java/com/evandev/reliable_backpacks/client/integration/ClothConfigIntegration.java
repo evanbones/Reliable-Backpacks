@@ -21,6 +21,11 @@ public class ClothConfigIntegration {
         ConfigCategory general = builder.getOrCreateCategory(Component.translatable("config.reliable_backpacks.category.general"));
         ConfigEntryBuilder entryBuilder = builder.entryBuilder();
 
+        general.addEntry(entryBuilder.startBooleanToggle(Component.translatable("config.reliable_backpacks.enable_accessories_integration"), config.enableAccessoriesIntegration)
+                .setDefaultValue(true)
+                .setSaveConsumer(newValue -> config.enableAccessoriesIntegration = newValue)
+                .build());
+
         return builder.build();
     }
 }
