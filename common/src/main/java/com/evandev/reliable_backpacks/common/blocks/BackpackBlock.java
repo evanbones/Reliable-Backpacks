@@ -1,11 +1,14 @@
 package com.evandev.reliable_backpacks.common.blocks;
 
 import com.evandev.reliable_backpacks.registry.BPBlockEntities;
+import com.evandev.reliable_backpacks.registry.BPSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
