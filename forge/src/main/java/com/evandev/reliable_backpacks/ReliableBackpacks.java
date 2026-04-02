@@ -4,6 +4,7 @@ import com.evandev.reliable_backpacks.client.ReliableBackpacksClient;
 import com.evandev.reliable_backpacks.common.events.BackpackPickupEvents;
 import com.evandev.reliable_backpacks.common.events.EntityInteractionEvents;
 import com.evandev.reliable_backpacks.compat.CuriosCompat;
+import com.evandev.reliable_backpacks.config.ModConfig;
 import com.evandev.reliable_backpacks.networking.BackpackOpenPayload;
 import com.evandev.reliable_backpacks.registry.BPBlockEntities;
 import com.evandev.reliable_backpacks.registry.BPBlocks;
@@ -118,7 +119,7 @@ public class ReliableBackpacks {
     }
 
     private void enqueueIMC(final InterModEnqueueEvent event) {
-        if (ModList.get().isLoaded("curios")) {
+        if (ModList.get().isLoaded("curios") && ModConfig.get().enableCuriosIntegration) {
             CuriosCompat.registerSlot();
         }
     }
