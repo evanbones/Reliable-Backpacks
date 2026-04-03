@@ -11,9 +11,11 @@ import com.evandev.reliable_backpacks.registry.BPBlockEntities;
 import com.evandev.reliable_backpacks.registry.BPItems;
 import com.evandev.reliable_backpacks.registry.BPLayers;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.entity.ArmorStandRenderer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.DyeableLeatherItem;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.RegisterColorHandlersEvent;
@@ -46,6 +48,10 @@ public class ReliableBackpacksClient {
             if (event.getSkin(skin) instanceof PlayerRenderer playerRenderer) {
                 playerRenderer.addLayer(new BackpackLayer<>(playerRenderer, event.getEntityModels()));
             }
+        }
+
+        if (event.getRenderer(EntityType.ARMOR_STAND) instanceof ArmorStandRenderer armorStandRenderer) {
+            armorStandRenderer.addLayer(new BackpackLayer<>(armorStandRenderer, event.getEntityModels()));
         }
     }
 

@@ -16,6 +16,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityFeatureRendererRegistrationCallback;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
+import net.minecraft.client.renderer.entity.ArmorStandRenderer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.resources.ResourceLocation;
@@ -44,6 +45,8 @@ public class ReliableBackpacksClient implements ClientModInitializer {
         LivingEntityFeatureRendererRegistrationCallback.EVENT.register((entityType, entityRenderer, registrationHelper, context) -> {
             if (entityRenderer instanceof PlayerRenderer playerRenderer) {
                 registrationHelper.register(new BackpackLayer<>(playerRenderer, context.getModelSet()));
+            } else if (entityRenderer instanceof ArmorStandRenderer armorStandRenderer) {
+                registrationHelper.register(new BackpackLayer<>(armorStandRenderer, context.getModelSet()));
             }
         });
 

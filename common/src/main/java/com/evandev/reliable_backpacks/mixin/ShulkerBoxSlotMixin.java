@@ -22,7 +22,7 @@ public abstract class ShulkerBoxSlotMixin extends Slot {
     @Inject(method = "mayPlace", at = @At("HEAD"), cancellable = true)
     public void mayPlace(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
         if (this.container instanceof BackpackBlockEntity || this.container instanceof BackpackItemContainer) {
-            if (stack.is(BPTags.BACKPACK_BLACKLIST) || !stack.getItem().canFitInsideContainerItems()) {
+            if (stack.is(BPTags.BACKPACK_BLACKLIST)) {
                 cir.setReturnValue(false);
             }
         }

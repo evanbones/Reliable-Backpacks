@@ -28,22 +28,18 @@ import org.figuramc.figura.model.ParentType;
 import org.jetbrains.annotations.NotNull;
 import tech.thatgravyboat.vanity.common.item.DesignHelper;
 
-import java.util.Objects;
-
 public class BackpackLayer<T extends LivingEntity, M extends HumanoidModel<T>> extends RenderLayer<T, M> {
     private static final ResourceLocation TEXTURE = new ResourceLocation(Constants.MOD_ID, "textures/model/backpack.png");
     private static final ResourceLocation BASE_TEXTURE = new ResourceLocation(Constants.MOD_ID, "textures/model/backpack_base.png");
     private static final ResourceLocation OVERLAY_TEXTURE = new ResourceLocation(Constants.MOD_ID, "textures/model/backpack_overlay.png");
     private final ModelPart backpackModel;
     private final ModelPart otherBackpackModel;
-    private final ModelPart parentBody;
     private ModelPart model;
 
     public BackpackLayer(RenderLayerParent renderer, EntityModelSet entityModelSet) {
         super(renderer);
         this.backpackModel = entityModelSet.bakeLayer(BPLayers.BACKPACK);
         this.otherBackpackModel = entityModelSet.bakeLayer(BPLayers.OTHER_BACKPACK);
-        this.parentBody = this.getParentBody();
     }
 
     public void render(@NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int packedLight, T livingEntity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float headYaw, float headPitch) {
@@ -51,7 +47,8 @@ public class BackpackLayer<T extends LivingEntity, M extends HumanoidModel<T>> e
 
         if (shouldRender(itemStack) && Services.PLATFORM.isBackpackVisible(livingEntity)) {
             if (Services.PLATFORM.isModLoaded("vanity")) {
-                ResourceLocation design = ResourceLocation.tryParse(Objects.requireNonNull(DesignHelper.getStyle(itemStack)));
+                String style = DesignHelper.getStyle(itemStack);
+                ResourceLocation design = style != null ? ResourceLocation.tryParse(style) : null;
                 if (design == null) {
                     this.model = backpackModel;
                 } else {
@@ -117,7 +114,7 @@ public class BackpackLayer<T extends LivingEntity, M extends HumanoidModel<T>> e
 
         this.model.getChild("base").getChild("lid").xRot = lidRot;
         if (copyPose) {
-            this.backpackModel.copyFrom(parentBody);
+            this.backpackModel.copyFrom(this.getParentBody());
         }
         VertexConsumer vertexConsumer = ItemRenderer.getArmorFoilBuffer(buffer, RenderType.armorCutoutNoCull(texture), false, itemStack.hasFoil());
         this.model.render(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY);
