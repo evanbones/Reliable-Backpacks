@@ -103,7 +103,7 @@ public class BackpackBlockEntity extends RandomizableContainerBlockEntity {
             this.level.blockEvent(this.worldPosition, this.getBlockState().getBlock(), 1, openCount);
             if (this.openCount == 1) {
                 this.level.gameEvent(player, GameEvent.CONTAINER_OPEN, this.worldPosition);
-                this.level.playSound(null, this.getBlockPos(), BPSounds.BACKPACK_OPEN, SoundSource.BLOCKS);
+                this.level.playSound(null, this.getBlockPos(), BPSounds.BACKPACK_OPEN, SoundSource.BLOCKS, 1.0F, 1.0F);
             }
         }
     }
@@ -114,7 +114,7 @@ public class BackpackBlockEntity extends RandomizableContainerBlockEntity {
             this.level.blockEvent(this.worldPosition, this.getBlockState().getBlock(), 1, openCount);
             if (this.openCount <= 0) {
                 this.level.gameEvent(player, GameEvent.CONTAINER_CLOSE, this.worldPosition);
-                this.level.playSound(null, this.getBlockPos(), BPSounds.BACKPACK_CLOSE, SoundSource.BLOCKS);
+                this.level.playSound(null, this.getBlockPos(), BPSounds.BACKPACK_CLOSE, SoundSource.BLOCKS, 1.0F, 1.0F);
             }
         }
     }
@@ -174,7 +174,7 @@ public class BackpackBlockEntity extends RandomizableContainerBlockEntity {
 
     @Override
     public boolean canPlaceItem(int index, ItemStack stack) {
-        if (stack.is(BPTags.BACKPACK_BLACKLIST) || !stack.getItem().canFitInsideContainerItems()) {
+        if (stack.is(BPTags.BACKPACK_BLACKLIST)) {
             return false;
         }
         return super.canPlaceItem(index, stack);

@@ -58,13 +58,13 @@ public class BackpackItemContainer extends SimpleContainer {
     @Override
     public void startOpen(@NotNull Player player) {
         Services.PLATFORM.sendToTracking(target, new BackpackOpenPayload(true, target.getId()));
-        target.level().playSound(null, target.blockPosition(), BPSounds.BACKPACK_OPEN, SoundSource.PLAYERS);
+        target.level().playSound(null, target.blockPosition(), BPSounds.BACKPACK_OPEN, SoundSource.PLAYERS, 1.0F, 1.0F);
         super.startOpen(player);
     }
 
     @Override
     public boolean canPlaceItem(int index, ItemStack stack) {
-        if (stack.is(BPTags.BACKPACK_BLACKLIST) || !stack.getItem().canFitInsideContainerItems()) {
+        if (stack.is(BPTags.BACKPACK_BLACKLIST)) {
             return false;
         }
         return super.canPlaceItem(index, stack);
@@ -73,7 +73,7 @@ public class BackpackItemContainer extends SimpleContainer {
     @Override
     public void stopOpen(@NotNull Player player) {
         Services.PLATFORM.sendToTracking(target, new BackpackOpenPayload(false, target.getId()));
-        target.level().playSound(null, target.blockPosition(), BPSounds.BACKPACK_CLOSE, SoundSource.PLAYERS);
+        target.level().playSound(null, target.blockPosition(), BPSounds.BACKPACK_CLOSE, SoundSource.PLAYERS, 1.0F, 1.0F);
         super.stopOpen(player);
     }
 }
