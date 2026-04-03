@@ -1,13 +1,21 @@
 package com.evandev.reliable_backpacks.client;
 
+import com.evandev.reliable_backpacks.Constants;
 import com.evandev.reliable_backpacks.client.models.BackpackModel;
 import com.evandev.reliable_backpacks.client.models.variants.OtherBackpackModel;
 import com.evandev.reliable_backpacks.client.rendering.BackpackBlockRenderer;
 import com.evandev.reliable_backpacks.client.rendering.BackpackLayer;
 import com.evandev.reliable_backpacks.registry.BPBlockEntities;
+import com.evandev.reliable_backpacks.registry.BPItems;
 import com.evandev.reliable_backpacks.registry.BPLayers;
+import net.minecraft.client.renderer.entity.ArmorStandRenderer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
+import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.client.resources.PlayerSkin;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.component.DyedItemColor;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 
@@ -24,17 +32,15 @@ public class ReliableBackpacksClient {
     }
 
     public static void registerItemColors(net.neoforged.neoforge.client.event.RegisterColorHandlersEvent.Item event) {
-        event.register((stack, tintIndex) -> {
-            return tintIndex == 1 ? net.minecraft.world.item.component.DyedItemColor.getOrDefault(stack, -1) : -1;
-        }, com.evandev.reliable_backpacks.registry.BPItems.BACKPACK);
+        event.register((stack, tintIndex) -> tintIndex == 1 ? DyedItemColor.getOrDefault(stack, -1) : -1, BPItems.BACKPACK);
     }
 
     public static void onClientSetup(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
-            net.minecraft.client.renderer.item.ItemProperties.register(
-                    com.evandev.reliable_backpacks.registry.BPItems.BACKPACK,
-                    net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(com.evandev.reliable_backpacks.Constants.MOD_ID, "dyed"),
-                    (stack, level, entity, seed) -> stack.has(net.minecraft.core.component.DataComponents.DYED_COLOR) ? 1.0F : 0.0F
+            ItemProperties.register(
+                    BPItems.BACKPACK,
+                    ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "dyed"),
+                    (stack, level, entity, seed) -> stack.has(DataComponents.DYED_COLOR) ? 1.0F : 0.0F
             );
         });
     }
@@ -44,6 +50,9 @@ public class ReliableBackpacksClient {
             if (event.getSkin(skin) instanceof PlayerRenderer playerRenderer) {
                 playerRenderer.addLayer(new BackpackLayer<>(playerRenderer, event.getEntityModels()));
             }
+        }
+        if (event.getRenderer(EntityType.ARMOR_STAND) instanceof ArmorStandRenderer armorStandRenderer) {
+            armorStandRenderer.addLayer(new BackpackLayer<>(armorStandRenderer, event.getEntityModels()));
         }
     }
 }

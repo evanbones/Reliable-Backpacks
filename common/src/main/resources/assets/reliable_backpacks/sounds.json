@@ -1,5 +1,6 @@
 {
   "block.backpack.place" : {
+    "subtitle": "subtitles.reliable_backpacks.backpack.place",
     "sounds" : [
       {
         "name" : "item.bundle.insert",
@@ -9,6 +10,7 @@
     ]
   },
   "block.backpack.open" : {
+    "subtitle": "subtitles.reliable_backpacks.backpack.open",
     "sounds" : [
       {
         "name" : "item.bundle.drop_contents",
@@ -18,6 +20,7 @@
     ]
   },
   "block.backpack.close" : {
+    "subtitle": "subtitles.reliable_backpacks.backpack.close",
     "sounds" : [
       {
         "name" : "item.bundle.insert",
@@ -27,6 +30,7 @@
     ]
   },
   "item.backpack.equip" : {
+    "subtitle": "subtitles.reliable_backpacks.backpack.equip",
     "sounds" : [
       {
         "name" : "item.armor.equip_wolf",

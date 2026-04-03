@@ -58,7 +58,7 @@ public class BackpackItemContainer extends SimpleContainer {
 
     @Override
     public boolean canPlaceItem(int index, ItemStack stack) {
-        if (stack.is(BPTags.BACKPACK_BLACKLIST) || !stack.getItem().canFitInsideContainerItems()) {
+        if (stack.is(BPTags.BACKPACK_BLACKLIST)) {
             return false;
         }
         return super.canPlaceItem(index, stack);
