@@ -26,6 +26,16 @@ public class ClothConfigIntegration {
                 .setSaveConsumer(newValue -> config.enableAccessoriesIntegration = newValue)
                 .build());
 
+        general.addEntry(entryBuilder.startBooleanToggle(Component.translatable("config.reliable_backpacks.enable_curios_integration"), config.enableCuriosIntegration)
+                .setDefaultValue(true)
+                .setSaveConsumer(newValue -> config.enableCuriosIntegration = newValue)
+                .build());
+
+        general.addEntry(entryBuilder.startBooleanToggle(Component.translatable("config.reliable_backpacks.enable_trinkets_integration"), config.enableTrinketsIntegration)
+                .setDefaultValue(true)
+                .setSaveConsumer(newValue -> config.enableTrinketsIntegration = newValue)
+                .build());
+
         return builder.build();
     }
 }

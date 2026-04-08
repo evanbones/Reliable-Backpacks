@@ -1,6 +1,7 @@
 package com.evandev.reliable_backpacks.platform;
 
 import com.evandev.reliable_backpacks.compat.AccessoriesHelper;
+import com.evandev.reliable_backpacks.compat.CuriosHelper;
 import com.evandev.reliable_backpacks.config.ModConfig;
 import com.evandev.reliable_backpacks.platform.services.IPlatformHelper;
 import com.evandev.reliable_backpacks.registry.BPItems;
@@ -57,6 +58,9 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
         if (ModConfig.get().enableAccessoriesIntegration && isModLoaded("accessories")) {
             if (AccessoriesHelper.canEquipBackpack(player)) return true;
         }
+        if (ModConfig.get().enableCuriosIntegration && isModLoaded("curios")) {
+            if (CuriosHelper.canEquipBackpack(player)) return true;
+        }
         return player.getItemBySlot(EquipmentSlot.CHEST).isEmpty();
     }
 
@@ -65,12 +69,10 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
         if (ModConfig.get().enableAccessoriesIntegration && isModLoaded("accessories")) {
             if (AccessoriesHelper.equipBackpack(player, stack)) return;
         }
+        if (ModConfig.get().enableCuriosIntegration && isModLoaded("curios")) {
+            if (CuriosHelper.equipBackpack(player, stack)) return;
+        }
         player.setItemSlot(EquipmentSlot.CHEST, stack);
-    }
-
-    @Override
-    public boolean isBackpackEquipped(LivingEntity livingEntity) {
-        return !getEquippedBackpack(livingEntity).isEmpty();
     }
 
     @Override
@@ -79,19 +81,29 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
             return livingEntity.getItemBySlot(EquipmentSlot.CHEST);
         }
         if (ModConfig.get().enableAccessoriesIntegration && isModLoaded("accessories")) {
-            return AccessoriesHelper.getEquippedBackpack(livingEntity);
+            ItemStack accStack = AccessoriesHelper.getEquippedBackpack(livingEntity);
+            if (!accStack.isEmpty()) return accStack;
+        }
+        if (ModConfig.get().enableCuriosIntegration && isModLoaded("curios")) {
+            return CuriosHelper.getEquippedBackpack(livingEntity);
         }
         return ItemStack.EMPTY;
     }
 
     @Override
     public boolean isBackpackVisible(LivingEntity livingEntity) {
-        if (livingEntity.getItemBySlot(EquipmentSlot.CHEST).is(BPItems.BACKPACK)) {
-            return true;
-        }
+        if (livingEntity.getItemBySlot(EquipmentSlot.CHEST).is(BPItems.BACKPACK)) return true;
         if (ModConfig.get().enableAccessoriesIntegration && isModLoaded("accessories")) {
             return AccessoriesHelper.isBackpackVisible(livingEntity);
         }
+        if (ModConfig.get().enableCuriosIntegration && isModLoaded("curios")) {
+            return CuriosHelper.isBackpackVisible(livingEntity);
+        }
         return true;
+    }
+
+    @Override
+    public boolean isBackpackEquipped(LivingEntity livingEntity) {
+        return !getEquippedBackpack(livingEntity).isEmpty();
     }
 }

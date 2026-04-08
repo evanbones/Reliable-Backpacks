@@ -5,6 +5,7 @@
   "package": "com.evandev.reliable_backpacks.mixin",
   "plugin": "com.moulberry.mixinconstraints.ConstraintsMixinPlugin",
   "mixins": [
+    "HopperBlockEntityMixin",
     "ItemEntityMixin",
     "LivingEntityMixin",
     "PlayerMixin",
