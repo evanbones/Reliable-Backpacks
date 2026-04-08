@@ -18,17 +18,11 @@ public class ModConfig {
     private static final File CONFIG_FILE = Services.PLATFORM.getConfigDirectory().resolve("reliable_backpacks.json").toFile();
     private static ModConfig INSTANCE;
 
-    @SerializedName("enabled")
-    public boolean enabled = true;
-
     @SerializedName("enable_curios_integration")
     public boolean enableCuriosIntegration = true;
 
     @SerializedName("enable_trinkets_integration")
     public boolean enableTrinketsIntegration = true;
-
-    @SerializedName("missing_id_map")
-    public Map<String, String> missingIdMap = new HashMap<>();
 
     public static ModConfig get() {
         if (INSTANCE == null) {

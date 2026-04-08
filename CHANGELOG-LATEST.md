@@ -1,5 +1,7 @@
-### Fixed
+### Added
 
-- Fixed Backpack blacklist not being respected for certain containers.
-- Fixed missing subtitles for backpack placing/equiping.
-- Fixed backpack rendering on armor stands.
+- Added support for Curios (NeoForge) and Trinkets (Fabric) on 1.21.
+
+### Changed
+
+- Filled Backpacks can no longer be inserted into Hoppers.
