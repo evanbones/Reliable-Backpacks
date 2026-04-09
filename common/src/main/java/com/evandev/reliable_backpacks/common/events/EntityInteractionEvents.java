@@ -26,12 +26,16 @@ public class EntityInteractionEvents {
         if (target != null && item.is(BPItems.BACKPACK) && isBehind(player, target)) {
 
             if (!player.level().isClientSide()) {
-                BackpackItemContainer container = new BackpackItemContainer(target, player);
-                if (!item.has(DataComponents.CONTAINER)) {
-                    item.set(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
-                }
-                Objects.requireNonNull(item.get(DataComponents.CONTAINER)).copyInto(container.getItems());
-                player.openMenu(new SimpleMenuProvider((a, b, c) -> new ShulkerBoxMenu(a, player.getInventory(), container), Component.translatable("container.backpack")));
+                Objects.requireNonNull(player.getServer()).execute(() -> {
+                    if (player.distanceTo(target) < 5) {
+                        BackpackItemContainer container = new BackpackItemContainer(target, player);
+                        if (!item.has(DataComponents.CONTAINER)) {
+                            item.set(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
+                        }
+                        Objects.requireNonNull(item.get(DataComponents.CONTAINER)).copyInto(container.getItems());
+                        player.openMenu(new SimpleMenuProvider((a, b, c) -> new ShulkerBoxMenu(a, player.getInventory(), container), Component.translatable("container.backpack")));
+                    }
+                });
             }
 
             return InteractionResult.sidedSuccess(player.level().isClientSide());
