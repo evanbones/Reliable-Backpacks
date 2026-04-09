@@ -12,6 +12,8 @@ import net.minecraft.world.inventory.ShulkerBoxMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.Objects;
+
 public class EntityInteractionEvents {
 
     public static InteractionResult onEntityInteract(Player player, Entity targetEntity) {
@@ -20,8 +22,12 @@ public class EntityInteractionEvents {
 
         if (target != null && !item.isEmpty() && isBehind(player, target)) {
             if (!player.level().isClientSide()) {
-                BackpackItemContainer container = new BackpackItemContainer(target, player);
-                player.openMenu(new SimpleMenuProvider((a, b, c) -> new ShulkerBoxMenu(a, player.getInventory(), container), Component.translatable("container.backpack")));
+                Objects.requireNonNull(player.getServer()).execute(() -> {
+                    if (player.distanceTo(target) < 5) {
+                        BackpackItemContainer container = new BackpackItemContainer(target, player);
+                        player.openMenu(new SimpleMenuProvider((a, b, c) -> new ShulkerBoxMenu(a, player.getInventory(), container), Component.translatable("container.backpack")));
+                    }
+                });
             }
 
             return InteractionResult.sidedSuccess(player.level().isClientSide());
