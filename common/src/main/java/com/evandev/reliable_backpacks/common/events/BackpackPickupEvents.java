@@ -45,9 +45,11 @@ public class BackpackPickupEvents {
 
         boolean hasBackpack = Services.PLATFORM.isBackpackEquipped(player);
         boolean canEquip = Services.PLATFORM.canEquipBackpack(player);
-        boolean isAbove = (pos.above().getY() > player.getEyeY());
-        boolean isUnobstructed = level.isUnobstructed(BPBlocks.BACKPACK.defaultBlockState(), pos.above(),
-                CollisionContext.of(player)) && level.getBlockState(pos.above()).canBeReplaced();
+        BlockPos targetPos = level.getBlockState(pos).canBeReplaced() ? pos : pos.relative(hitResult.getDirection());
+        boolean isAbove = (targetPos.getY() > player.getEyeY());
+        boolean isUnobstructed = !level.isOutsideBuildHeight(targetPos) &&
+                level.isUnobstructed(BPBlocks.BACKPACK.defaultBlockState(), targetPos, CollisionContext.of(player)) &&
+                level.getBlockState(targetPos).canBeReplaced();
 
         // PICKUP
         if (player.isShiftKeyDown() && canEquip && block == BPBlocks.BACKPACK && blockEntity != null) {
@@ -66,7 +68,7 @@ public class BackpackPickupEvents {
         }
 
         // PLACEMENT
-        if (player.isShiftKeyDown() && heldItem.isEmpty() && hasBackpack && hitResult.getDirection() == Direction.UP && !isAbove && isUnobstructed) {
+        if (player.isShiftKeyDown() && heldItem.isEmpty() && hasBackpack && (hitResult.getDirection() == Direction.UP || level.getBlockState(pos).canBeReplaced()) && !isAbove && isUnobstructed) {
             ItemStack backpackStack = Services.PLATFORM.getEquippedBackpack(player);
 
             if (!backpackStack.isEmpty()) {
@@ -74,17 +76,17 @@ public class BackpackPickupEvents {
 
                 BlockState state = BPBlocks.BACKPACK.defaultBlockState()
                         .setValue(FACING, player.getDirection())
-                        .setValue(WATERLOGGED, level.getFluidState(pos.above()).getType() == Fluids.WATER);
+                        .setValue(WATERLOGGED, level.getFluidState(targetPos).getType() == Fluids.WATER);
 
-                blockEntity = new BackpackBlockEntity(pos.above(), state);
+                blockEntity = new BackpackBlockEntity(targetPos, state);
                 blockEntity.applyComponentsFromItemStack(backpackStack);
 
                 if (!level.isClientSide) {
-                    level.setBlockAndUpdate(pos.above(), state);
+                    level.setBlockAndUpdate(targetPos, state);
                     level.setBlockEntity(blockEntity);
 
                     backpackStack.shrink(1);
-                    level.playSound(null, pos.above(), BPSounds.BACKPACK_PLACE.value(), SoundSource.BLOCKS);
+                    level.playSound(null, targetPos, BPSounds.BACKPACK_PLACE.value(), SoundSource.BLOCKS);
                 }
 
                 return InteractionResult.sidedSuccess(level.isClientSide);

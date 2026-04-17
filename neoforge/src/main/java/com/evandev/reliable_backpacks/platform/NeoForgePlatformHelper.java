@@ -77,29 +77,27 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
 
     @Override
     public ItemStack getEquippedBackpack(LivingEntity livingEntity) {
-        if (livingEntity.getItemBySlot(EquipmentSlot.CHEST).is(BPItems.BACKPACK)) {
-            return livingEntity.getItemBySlot(EquipmentSlot.CHEST);
-        }
         if (ModConfig.get().enableAccessoriesIntegration && isModLoaded("accessories")) {
             ItemStack accStack = AccessoriesHelper.getEquippedBackpack(livingEntity);
             if (!accStack.isEmpty()) return accStack;
         }
         if (ModConfig.get().enableCuriosIntegration && isModLoaded("curios")) {
-            return CuriosHelper.getEquippedBackpack(livingEntity);
+            ItemStack curiosStack = CuriosHelper.getEquippedBackpack(livingEntity);
+            if (!curiosStack.isEmpty()) return curiosStack;
         }
-        return ItemStack.EMPTY;
+        ItemStack chest = livingEntity.getItemBySlot(EquipmentSlot.CHEST);
+        return chest.is(BPItems.BACKPACK) ? chest : ItemStack.EMPTY;
     }
 
     @Override
     public boolean isBackpackVisible(LivingEntity livingEntity) {
-        if (livingEntity.getItemBySlot(EquipmentSlot.CHEST).is(BPItems.BACKPACK)) return true;
         if (ModConfig.get().enableAccessoriesIntegration && isModLoaded("accessories")) {
             return AccessoriesHelper.isBackpackVisible(livingEntity);
         }
         if (ModConfig.get().enableCuriosIntegration && isModLoaded("curios")) {
             return CuriosHelper.isBackpackVisible(livingEntity);
         }
-        return true;
+        return livingEntity.getItemBySlot(EquipmentSlot.CHEST).is(BPItems.BACKPACK);
     }
 
     @Override

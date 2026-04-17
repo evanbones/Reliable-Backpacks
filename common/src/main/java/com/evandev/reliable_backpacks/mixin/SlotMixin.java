@@ -3,6 +3,7 @@ package com.evandev.reliable_backpacks.mixin;
 import com.evandev.reliable_backpacks.registry.BPItems;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
@@ -16,6 +17,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(Slot.class)
 public abstract class SlotMixin {
 
+    @Unique
+    private static boolean isNonEmptyBackpack(ItemStack stack) {
+        if (!stack.is(BPItems.BACKPACK)) return false;
+
+        ItemContainerContents contents = stack.get(DataComponents.CONTAINER);
+        if (contents == null) return false;
+
+        return contents.nonEmptyItems().iterator().hasNext();
+    }
+
     @Shadow
     public abstract ItemStack getItem();
 
@@ -24,21 +35,18 @@ public abstract class SlotMixin {
         Slot thisSlot = (Slot) (Object) this;
 
         if (thisSlot.container instanceof Inventory) {
-            if (thisSlot.getContainerSlot() == 38) return;
-
             if (isNonEmptyBackpack(stack)) {
                 cir.setReturnValue(false);
             }
         }
     }
 
-    @Unique
-    private boolean isNonEmptyBackpack(ItemStack stack) {
-        if (!stack.is(BPItems.BACKPACK)) return false;
+    @Inject(method = "mayPickup", at = @At("HEAD"), cancellable = true)
+    public void mayPickup(Player player, CallbackInfoReturnable<Boolean> cir) {
+        Slot thisSlot = (Slot) (Object) this;
 
-        ItemContainerContents contents = stack.get(DataComponents.CONTAINER);
-        if (contents == null) return false;
-
-        return contents.nonEmptyItems().iterator().hasNext();
+        if (thisSlot.container instanceof Inventory && isNonEmptyBackpack(thisSlot.getItem())) {
+            cir.setReturnValue(false);
+        }
     }
 }

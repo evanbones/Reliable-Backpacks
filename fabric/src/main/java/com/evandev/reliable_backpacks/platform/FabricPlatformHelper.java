@@ -81,29 +81,27 @@ public class FabricPlatformHelper implements IPlatformHelper {
 
     @Override
     public ItemStack getEquippedBackpack(LivingEntity livingEntity) {
-        if (livingEntity.getItemBySlot(EquipmentSlot.CHEST).is(BPItems.BACKPACK)) {
-            return livingEntity.getItemBySlot(EquipmentSlot.CHEST);
-        }
         if (ModConfig.get().enableAccessoriesIntegration && isModLoaded("accessories")) {
             ItemStack accStack = AccessoriesHelper.getEquippedBackpack(livingEntity);
             if (!accStack.isEmpty()) return accStack;
         }
         if (ModConfig.get().enableTrinketsIntegration && isModLoaded("trinkets")) {
-            return TrinketsHelper.getEquippedBackpack(livingEntity);
+            ItemStack trinketsStack = TrinketsHelper.getEquippedBackpack(livingEntity);
+            if (!trinketsStack.isEmpty()) return trinketsStack;
         }
-        return ItemStack.EMPTY;
+        ItemStack chest = livingEntity.getItemBySlot(EquipmentSlot.CHEST);
+        return chest.is(BPItems.BACKPACK) ? chest : ItemStack.EMPTY;
     }
 
     @Override
     public boolean isBackpackVisible(LivingEntity livingEntity) {
-        if (livingEntity.getItemBySlot(EquipmentSlot.CHEST).is(BPItems.BACKPACK)) return true;
         if (ModConfig.get().enableAccessoriesIntegration && isModLoaded("accessories")) {
             return AccessoriesHelper.isBackpackVisible(livingEntity);
         }
         if (ModConfig.get().enableTrinketsIntegration && isModLoaded("trinkets")) {
             return TrinketsHelper.isBackpackVisible(livingEntity);
         }
-        return true;
+        return livingEntity.getItemBySlot(EquipmentSlot.CHEST).is(BPItems.BACKPACK);
     }
 
     @Override

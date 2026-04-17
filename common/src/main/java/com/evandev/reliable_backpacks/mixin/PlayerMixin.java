@@ -29,6 +29,14 @@ public abstract class PlayerMixin {
                 handleEjectedBackpack(player, stack);
             }
         }
+
+        for (int i = 0; i < player.getInventory().offhand.size(); i++) {
+            ItemStack stack = player.getInventory().offhand.get(i);
+            if (isNonEmptyBackpack(stack)) {
+                player.getInventory().offhand.set(i, ItemStack.EMPTY);
+                handleEjectedBackpack(player, stack);
+            }
+        }
     }
 
     @Unique
