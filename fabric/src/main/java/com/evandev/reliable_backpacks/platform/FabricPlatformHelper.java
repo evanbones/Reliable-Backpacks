@@ -66,8 +66,7 @@ public class FabricPlatformHelper implements IPlatformHelper {
     @Override
     public ItemStack getBackpack(LivingEntity entity) {
         if (ModConfig.get().enableTrinketsIntegration && isModLoaded("trinkets")) {
-            ItemStack trinket = TrinketsCompat.getBackpack(entity);
-            if (!trinket.isEmpty()) return trinket;
+            return TrinketsCompat.getBackpack(entity);
         }
         ItemStack chest = entity.getItemBySlot(EquipmentSlot.CHEST);
         return chest.is(BPItems.BACKPACK) ? chest : ItemStack.EMPTY;
@@ -75,13 +74,17 @@ public class FabricPlatformHelper implements IPlatformHelper {
 
     @Override
     public boolean canEquipBackpack(LivingEntity entity) {
-        if (ModConfig.get().enableTrinketsIntegration && isModLoaded("trinkets") && TrinketsCompat.canEquipBackpack(entity)) return true;
+        if (ModConfig.get().enableTrinketsIntegration && isModLoaded("trinkets")) {
+            return TrinketsCompat.canEquipBackpack(entity);
+        }
         return entity.getItemBySlot(EquipmentSlot.CHEST).isEmpty();
     }
 
     @Override
     public boolean equipBackpack(LivingEntity entity, ItemStack stack) {
-        if (ModConfig.get().enableTrinketsIntegration && isModLoaded("trinkets") && TrinketsCompat.equipBackpack(entity, stack)) return true;
+        if (ModConfig.get().enableTrinketsIntegration && isModLoaded("trinkets")) {
+            return TrinketsCompat.equipBackpack(entity, stack);
+        }
         if (entity.getItemBySlot(EquipmentSlot.CHEST).isEmpty()) {
             entity.setItemSlot(EquipmentSlot.CHEST, stack);
             return true;
@@ -91,7 +94,10 @@ public class FabricPlatformHelper implements IPlatformHelper {
 
     @Override
     public void unequipBackpack(LivingEntity entity) {
-        if (ModConfig.get().enableTrinketsIntegration && isModLoaded("trinkets") && TrinketsCompat.unequipBackpack(entity)) return;
+        if (ModConfig.get().enableTrinketsIntegration && isModLoaded("trinkets")) {
+            TrinketsCompat.unequipBackpack(entity);
+            return;
+        }
         if (entity.getItemBySlot(EquipmentSlot.CHEST).is(BPItems.BACKPACK)) {
             entity.setItemSlot(EquipmentSlot.CHEST, ItemStack.EMPTY);
         }

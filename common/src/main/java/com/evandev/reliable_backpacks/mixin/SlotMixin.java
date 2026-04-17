@@ -3,6 +3,7 @@ package com.evandev.reliable_backpacks.mixin;
 import com.evandev.reliable_backpacks.registry.BPItems;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
@@ -30,6 +31,13 @@ public abstract class SlotMixin {
             if (isNonEmptyBackpack(stack)) {
                 cir.setReturnValue(false);
             }
+        }
+    }
+
+    @Inject(method = "mayPickup", at = @At("HEAD"), cancellable = true)
+    public void mayPickup(Player player, CallbackInfoReturnable<Boolean> cir) {
+        if (isNonEmptyBackpack(this.getItem())) {
+            cir.setReturnValue(false);
         }
     }
 

@@ -55,8 +55,7 @@ public class ForgePlatformHelper implements IPlatformHelper {
     @Override
     public ItemStack getBackpack(LivingEntity entity) {
         if (ModConfig.get().enableCuriosIntegration && isModLoaded("curios")) {
-            ItemStack curio = CuriosCompat.getBackpack(entity);
-            if (!curio.isEmpty()) return curio;
+            return CuriosCompat.getBackpack(entity);
         }
         ItemStack chest = entity.getItemBySlot(EquipmentSlot.CHEST);
         return chest.is(BPItems.BACKPACK) ? chest : ItemStack.EMPTY;
@@ -64,13 +63,17 @@ public class ForgePlatformHelper implements IPlatformHelper {
 
     @Override
     public boolean canEquipBackpack(LivingEntity entity) {
-        if (ModConfig.get().enableCuriosIntegration && isModLoaded("curios") && CuriosCompat.canEquipBackpack(entity)) return true;
+        if (ModConfig.get().enableCuriosIntegration && isModLoaded("curios")) {
+            return CuriosCompat.canEquipBackpack(entity);
+        }
         return entity.getItemBySlot(EquipmentSlot.CHEST).isEmpty();
     }
 
     @Override
     public boolean equipBackpack(LivingEntity entity, ItemStack stack) {
-        if (ModConfig.get().enableCuriosIntegration && isModLoaded("curios") && CuriosCompat.equipBackpack(entity, stack)) return true;
+        if (ModConfig.get().enableCuriosIntegration && isModLoaded("curios")) {
+            return CuriosCompat.equipBackpack(entity, stack);
+        }
         if (entity.getItemBySlot(EquipmentSlot.CHEST).isEmpty()) {
             entity.setItemSlot(EquipmentSlot.CHEST, stack);
             return true;
@@ -80,7 +83,10 @@ public class ForgePlatformHelper implements IPlatformHelper {
 
     @Override
     public void unequipBackpack(LivingEntity entity) {
-        if (ModConfig.get().enableCuriosIntegration && isModLoaded("curios") && CuriosCompat.unequipBackpack(entity)) return;
+        if (ModConfig.get().enableCuriosIntegration && isModLoaded("curios")) {
+            CuriosCompat.unequipBackpack(entity);
+            return;
+        }
         if (entity.getItemBySlot(EquipmentSlot.CHEST).is(BPItems.BACKPACK)) {
             entity.setItemSlot(EquipmentSlot.CHEST, ItemStack.EMPTY);
         }

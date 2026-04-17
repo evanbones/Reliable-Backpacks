@@ -43,7 +43,7 @@ public class BackpackPickupEvents {
 
         BlockPos targetPos = clickedState.canBeReplaced() ? pos : pos.relative(hitResult.getDirection());
         boolean isAbove = (targetPos.getY() > player.getEyeY());
-        boolean isUnobstructed = level.isUnobstructed(BPBlocks.BACKPACK.defaultBlockState(), targetPos,
+        boolean isUnobstructed = !level.isOutsideBuildHeight(targetPos) && level.isUnobstructed(BPBlocks.BACKPACK.defaultBlockState(), targetPos,
                 CollisionContext.of(player)) && level.getBlockState(targetPos).canBeReplaced();
 
         // PICKUP

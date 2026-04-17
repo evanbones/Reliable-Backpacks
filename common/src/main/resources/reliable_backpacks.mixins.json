@@ -6,6 +6,7 @@
   "plugin": "com.moulberry.mixinconstraints.ConstraintsMixinPlugin",
   "refmap": "${mod_id}.refmap.json",
   "mixins": [
+    "EnchantmentHelperMixin",
     "HopperBlockEntityMixin",
     "ItemEntityMixin",
     "LivingEntityMixin",

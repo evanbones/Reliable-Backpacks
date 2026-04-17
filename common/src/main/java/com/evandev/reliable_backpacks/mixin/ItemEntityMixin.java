@@ -76,7 +76,7 @@ public abstract class ItemEntityMixin extends Entity implements TraceableEntity 
             BlockPos pos = this.blockPosition();
             BlockPos targetPos = level.getBlockState(pos).canBeReplaced() ? pos : pos.above();
 
-            boolean isUnobstructed = level.getBlockState(targetPos).canBeReplaced() &&
+            boolean isUnobstructed = !level.isOutsideBuildHeight(targetPos) && level.getBlockState(targetPos).canBeReplaced() &&
                     (!level.getFluidState(targetPos).isSource() || !level.getBlockState(targetPos.above()).canBeReplaced());
 
             if ((this.onGround() || level.getFluidState(pos).isSource()) && isUnobstructed) {
