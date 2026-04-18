@@ -76,8 +76,9 @@ public class BackpackPickupEvents {
         }
 
         // PLACEMENT
-        if (player.isShiftKeyDown() && heldItem.isEmpty() && hasBackpack && (hitResult.getDirection() == Direction.UP || clickedState.canBeReplaced()) && !isAbove && isUnobstructed) {
-            player.swing(InteractionHand.MAIN_HAND);
+        boolean isMainHand = hand == InteractionHand.MAIN_HAND;
+        boolean handsEmpty = player.getMainHandItem().isEmpty() && player.getOffhandItem().isEmpty();
+        if (isMainHand && player.isShiftKeyDown() && handsEmpty && hasBackpack && (hitResult.getDirection() == Direction.UP || level.getBlockState(pos).canBeReplaced()) && !isAbove && isUnobstructed) {
 
             BlockState state = BPBlocks.BACKPACK.defaultBlockState()
                     .setValue(FACING, player.getDirection())
