@@ -55,6 +55,8 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
 
     @Override
     public boolean canEquipBackpack(Player player) {
+        if (isBackpackEquipped(player)) return false;
+
         if (ModConfig.get().enableAccessoriesIntegration && isModLoaded("accessories")) {
             if (AccessoriesHelper.canEquipBackpack(player)) return true;
         }
@@ -92,11 +94,17 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
     @Override
     public boolean isBackpackVisible(LivingEntity livingEntity) {
         if (ModConfig.get().enableAccessoriesIntegration && isModLoaded("accessories")) {
-            return AccessoriesHelper.isBackpackVisible(livingEntity);
+            if (!AccessoriesHelper.getEquippedBackpack(livingEntity).isEmpty()) {
+                return AccessoriesHelper.isBackpackVisible(livingEntity);
+            }
         }
+
         if (ModConfig.get().enableCuriosIntegration && isModLoaded("curios")) {
-            return CuriosHelper.isBackpackVisible(livingEntity);
+            if (!CuriosHelper.getEquippedBackpack(livingEntity).isEmpty()) {
+                return CuriosHelper.isBackpackVisible(livingEntity);
+            }
         }
+
         return livingEntity.getItemBySlot(EquipmentSlot.CHEST).is(BPItems.BACKPACK);
     }
 

@@ -59,6 +59,8 @@ public class FabricPlatformHelper implements IPlatformHelper {
 
     @Override
     public boolean canEquipBackpack(Player player) {
+        if (isBackpackEquipped(player)) return false;
+
         if (ModConfig.get().enableAccessoriesIntegration && isModLoaded("accessories")) {
             if (AccessoriesHelper.canEquipBackpack(player)) return true;
         }

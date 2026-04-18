@@ -1,8 +1,10 @@
 package com.evandev.reliable_backpacks.common.items;
 
+import com.evandev.reliable_backpacks.platform.Services;
 import com.evandev.reliable_backpacks.registry.BPSounds;
 import net.minecraft.core.Holder;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -45,6 +47,17 @@ public class BackpackItem extends BlockItem implements Equipable {
             return InteractionResultHolder.pass(itemStack);
         }
 
-        return this.swapWithEquipmentSlot(this, level, player, hand);
+        if (Services.PLATFORM.canEquipBackpack(player)) {
+            if (!level.isClientSide()) {
+                ItemStack copy = itemStack.copy();
+                copy.setCount(1);
+                Services.PLATFORM.equipBackpack(player, copy);
+                itemStack.shrink(1);
+            }
+            level.playSound(null, player.blockPosition(), this.getEquipSound().value(), SoundSource.PLAYERS, 1.0F, 1.0F);
+            return InteractionResultHolder.sidedSuccess(itemStack, level.isClientSide());
+        }
+
+        return InteractionResultHolder.fail(itemStack);
     }
 }

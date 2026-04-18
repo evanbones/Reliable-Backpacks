@@ -35,8 +35,11 @@ public abstract class SlotMixin {
         Slot thisSlot = (Slot) (Object) this;
 
         if (thisSlot.container instanceof Inventory) {
-            if (isNonEmptyBackpack(stack)) {
-                cir.setReturnValue(false);
+            int slotIndex = thisSlot.getContainerSlot();
+            if (slotIndex < 36 || slotIndex == 40) {
+                if (isNonEmptyBackpack(stack)) {
+                    cir.setReturnValue(false);
+                }
             }
         }
     }
@@ -45,8 +48,13 @@ public abstract class SlotMixin {
     public void mayPickup(Player player, CallbackInfoReturnable<Boolean> cir) {
         Slot thisSlot = (Slot) (Object) this;
 
-        if (thisSlot.container instanceof Inventory && isNonEmptyBackpack(thisSlot.getItem())) {
-            cir.setReturnValue(false);
+        if (thisSlot.container instanceof Inventory) {
+            int slotIndex = thisSlot.getContainerSlot();
+            if (slotIndex < 36 || slotIndex == 40) {
+                if (isNonEmptyBackpack(thisSlot.getItem())) {
+                    cir.setReturnValue(false);
+                }
+            }
         }
     }
 }

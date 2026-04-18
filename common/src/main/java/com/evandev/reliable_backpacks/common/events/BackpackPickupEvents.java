@@ -13,12 +13,8 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.Equipable;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.level.Level;
@@ -68,7 +64,10 @@ public class BackpackPickupEvents {
         }
 
         // PLACEMENT
-        if (player.isShiftKeyDown() && heldItem.isEmpty() && hasBackpack && (hitResult.getDirection() == Direction.UP || level.getBlockState(pos).canBeReplaced()) && !isAbove && isUnobstructed) {
+        boolean isMainHand = hand == InteractionHand.MAIN_HAND;
+        boolean handsEmpty = player.getMainHandItem().isEmpty() && player.getOffhandItem().isEmpty();
+
+        if (isMainHand && player.isShiftKeyDown() && handsEmpty && hasBackpack && (hitResult.getDirection() == Direction.UP || level.getBlockState(pos).canBeReplaced()) && !isAbove && isUnobstructed) {
             ItemStack backpackStack = Services.PLATFORM.getEquippedBackpack(player);
 
             if (!backpackStack.isEmpty()) {
@@ -96,20 +95,6 @@ public class BackpackPickupEvents {
     }
 
     public static InteractionResult onRightClickItem(Player player, InteractionHand hand) {
-        ItemStack stack = player.getItemInHand(hand);
-        Item item = stack.getItem();
-        EquipmentSlot slot = null;
-
-        if (item instanceof ArmorItem) {
-            slot = ((ArmorItem) item).getEquipmentSlot();
-        }
-        if (item instanceof Equipable) {
-            slot = ((Equipable) item).getEquipmentSlot();
-        }
-
-        if (slot == EquipmentSlot.CHEST && Services.PLATFORM.isBackpackEquipped(player)) {
-            return InteractionResult.FAIL;
-        }
         return InteractionResult.PASS;
     }
 
