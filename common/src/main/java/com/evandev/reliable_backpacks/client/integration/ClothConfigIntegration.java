@@ -36,6 +36,11 @@ public class ClothConfigIntegration {
                 .setSaveConsumer(newValue -> config.enableTrinketsIntegration = newValue)
                 .build());
 
+        general.addEntry(entryBuilder.startBooleanToggle(Component.translatable("config.reliable_backpacks.enable_entity_stealing"), config.enableEntityStealing)
+                .setDefaultValue(true)
+                .setSaveConsumer(newValue -> config.enableEntityStealing = newValue)
+                .build());
+
         return builder.build();
     }
 }

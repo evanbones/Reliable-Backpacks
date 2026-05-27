@@ -18,9 +18,6 @@ public class ModConfig {
     private static final File CONFIG_FILE = Services.PLATFORM.getConfigDirectory().resolve("reliable_backpacks.json").toFile();
     private static ModConfig INSTANCE;
 
-    @SerializedName("enabled")
-    public boolean enabled = true;
-
     @SerializedName("enable_accessories_integration")
     public boolean enableAccessoriesIntegration = true;
 
@@ -29,6 +26,9 @@ public class ModConfig {
 
     @SerializedName("enable_trinkets_integration")
     public boolean enableTrinketsIntegration = true;
+
+    @SerializedName("enable_entity_stealing")
+    public boolean enableEntityStealing = true;
 
     public static ModConfig get() {
         if (INSTANCE == null) {
