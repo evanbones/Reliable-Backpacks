@@ -10,8 +10,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 public class ModConfig {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
@@ -23,6 +21,9 @@ public class ModConfig {
 
     @SerializedName("enable_trinkets_integration")
     public boolean enableTrinketsIntegration = true;
+
+    @SerializedName("enable_entity_stealing")
+    public boolean enableEntityStealing = true;
 
     public static ModConfig get() {
         if (INSTANCE == null) {

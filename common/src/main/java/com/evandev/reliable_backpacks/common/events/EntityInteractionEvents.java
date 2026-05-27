@@ -1,6 +1,7 @@
 package com.evandev.reliable_backpacks.common.events;
 
 import com.evandev.reliable_backpacks.common.items.BackpackItemContainer;
+import com.evandev.reliable_backpacks.config.ModConfig;
 import com.evandev.reliable_backpacks.platform.Services;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
@@ -17,6 +18,10 @@ import java.util.Objects;
 public class EntityInteractionEvents {
 
     public static InteractionResult onEntityInteract(Player player, Entity targetEntity) {
+        if (!ModConfig.get().enableEntityStealing) {
+            return InteractionResult.PASS;
+        }
+
         LivingEntity target = targetEntity instanceof LivingEntity ? (LivingEntity) targetEntity : null;
         ItemStack item = target != null ? Services.PLATFORM.getBackpack(target) : ItemStack.EMPTY;
 
