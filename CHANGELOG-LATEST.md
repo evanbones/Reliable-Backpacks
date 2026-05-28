@@ -1,3 +1,3 @@
-### Added
+### Fixed
 
-- Added a config option to adjust the backpack inventory size.
+- Fixed backpacks not being openable on Fabric.
