@@ -1,5 +1,7 @@
 package com.evandev.reliable_backpacks.common.blocks;
 
+import com.evandev.reliable_backpacks.common.menus.BackpackMenu;
+import com.evandev.reliable_backpacks.config.ModConfig;
 import com.evandev.reliable_backpacks.registry.BPBlockEntities;
 import com.evandev.reliable_backpacks.registry.BPSounds;
 import com.evandev.reliable_backpacks.registry.BPTags;
@@ -10,10 +12,10 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.Containers;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ShulkerBoxMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -35,7 +37,7 @@ public class BackpackBlockEntity extends RandomizableContainerBlockEntity {
 
     public BackpackBlockEntity(BlockPos pos, BlockState blockState) {
         super(BPBlockEntities.BACKPACK, pos, blockState);
-        this.itemStacks = NonNullList.withSize(27, ItemStack.EMPTY);
+        this.itemStacks = NonNullList.withSize(ModConfig.get().backpackRows * 9, ItemStack.EMPTY);
         this.newlyPlaced = true;
     }
 
@@ -46,17 +48,44 @@ public class BackpackBlockEntity extends RandomizableContainerBlockEntity {
         if (!blockEntity.open && blockEntity.openTicks > 0) {
             --blockEntity.openTicks;
         }
+
         if (blockEntity.newlyPlaced && blockEntity.placeTicks < 20) {
             ++blockEntity.placeTicks;
         }
         if (blockEntity.placeTicks == 20) {
             blockEntity.newlyPlaced = false;
         }
+
         if (blockEntity.floatTicks < 90) {
             ++blockEntity.floatTicks;
         }
         if (blockEntity.floatTicks == 90) {
             blockEntity.floatTicks = 0;
+        }
+
+        int expectedSize = ModConfig.get().backpackRows * 9;
+        if (blockEntity.itemStacks.size() != expectedSize) {
+            NonNullList<ItemStack> newStacks = NonNullList.withSize(expectedSize, ItemStack.EMPTY);
+            boolean changed = false;
+
+            for (int i = 0; i < blockEntity.itemStacks.size(); i++) {
+                ItemStack stack = blockEntity.itemStacks.get(i);
+                if (!stack.isEmpty()) {
+                    if (i < expectedSize) {
+                        newStacks.set(i, stack);
+                    } else {
+                        if (!level.isClientSide) {
+                            Containers.dropItemStack(level, pos.getX(), pos.getY() + 1, pos.getZ(), stack);
+                        }
+                        changed = true;
+                    }
+                }
+            }
+
+            blockEntity.itemStacks = newStacks;
+            if (changed || blockEntity.itemStacks.size() != expectedSize) {
+                blockEntity.setChanged();
+            }
         }
     }
 
@@ -64,7 +93,6 @@ public class BackpackBlockEntity extends RandomizableContainerBlockEntity {
         return this.backpackItemTag;
     }
 
-    // Add getters and setters
     public void setBackpackItemTag(CompoundTag tag) {
         this.backpackItemTag = tag;
     }
@@ -132,7 +160,7 @@ public class BackpackBlockEntity extends RandomizableContainerBlockEntity {
     }
 
     protected @NotNull AbstractContainerMenu createMenu(int id, @NotNull Inventory player) {
-        return new ShulkerBoxMenu(id, player, this);
+        return new BackpackMenu(id, player, this);
     }
 
     public ClientboundBlockEntityDataPacket getUpdatePacket() {
@@ -142,10 +170,13 @@ public class BackpackBlockEntity extends RandomizableContainerBlockEntity {
     @Override
     public void load(@NotNull CompoundTag tag) {
         super.load(tag);
-        this.itemStacks = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
+        // Load into a massive list to catch overflow first.
+        // The tick() method will dynamically resize it and drop extra items.
+        this.itemStacks = NonNullList.withSize(256, ItemStack.EMPTY);
         if (!this.tryLoadLootTable(tag) && tag.contains("Items", 9)) {
             ContainerHelper.loadAllItems(tag, this.itemStacks);
         }
+
         this.floatTicks = tag.getInt("FloatTicks");
         this.newlyPlaced = tag.getBoolean("NewlyPlaced");
         this.color = tag.getInt("Color");

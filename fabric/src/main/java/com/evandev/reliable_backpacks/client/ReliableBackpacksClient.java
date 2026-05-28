@@ -1,6 +1,7 @@
 package com.evandev.reliable_backpacks.client;
 
 import com.evandev.reliable_backpacks.Constants;
+import com.evandev.reliable_backpacks.client.gui.BackpackScreen;
 import com.evandev.reliable_backpacks.client.models.BackpackModel;
 import com.evandev.reliable_backpacks.client.models.variants.OtherBackpackModel;
 import com.evandev.reliable_backpacks.client.rendering.BackpackBlockRenderer;
@@ -10,11 +11,13 @@ import com.evandev.reliable_backpacks.networking.BackpackPayloadHandler;
 import com.evandev.reliable_backpacks.registry.BPBlockEntities;
 import com.evandev.reliable_backpacks.registry.BPItems;
 import com.evandev.reliable_backpacks.registry.BPLayers;
+import com.evandev.reliable_backpacks.registry.BPMenus;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityFeatureRendererRegistrationCallback;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.renderer.entity.ArmorStandRenderer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
@@ -31,6 +34,7 @@ public class ReliableBackpacksClient implements ClientModInitializer {
         EntityModelLayerRegistry.registerModelLayer(BPLayers.OTHER_BACKPACK_BLOCK, OtherBackpackModel::createBlockLayer);
 
         BlockEntityRenderers.register(BPBlockEntities.BACKPACK, BackpackBlockRenderer::new);
+        MenuScreens.register(BPMenus.BACKPACK, BackpackScreen::new);
 
         ClientPlayNetworking.registerGlobalReceiver(new ResourceLocation("reliable_backpacks", "backpack_open"), (client, handler, buf, responseSender) -> {
             boolean isOpen = buf.readBoolean();

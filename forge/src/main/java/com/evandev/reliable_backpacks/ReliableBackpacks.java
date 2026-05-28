@@ -4,10 +4,7 @@ import com.evandev.reliable_backpacks.client.ReliableBackpacksClient;
 import com.evandev.reliable_backpacks.common.events.BackpackPickupEvents;
 import com.evandev.reliable_backpacks.common.events.EntityInteractionEvents;
 import com.evandev.reliable_backpacks.networking.BackpackOpenPayload;
-import com.evandev.reliable_backpacks.registry.BPBlockEntities;
-import com.evandev.reliable_backpacks.registry.BPBlocks;
-import com.evandev.reliable_backpacks.registry.BPItems;
-import com.evandev.reliable_backpacks.registry.BPSounds;
+import com.evandev.reliable_backpacks.registry.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -65,6 +62,8 @@ public class ReliableBackpacks {
             event.register(ForgeRegistries.Keys.ITEMS, helper -> helper.register(new ResourceLocation(Constants.MOD_ID, "backpack"), BPItems.BACKPACK));
         } else if (event.getRegistryKey().equals(ForgeRegistries.Keys.BLOCK_ENTITY_TYPES)) {
             event.register(ForgeRegistries.Keys.BLOCK_ENTITY_TYPES, helper -> helper.register(new ResourceLocation(Constants.MOD_ID, "backpack"), BPBlockEntities.BACKPACK));
+        } else if (event.getRegistryKey().equals(ForgeRegistries.Keys.MENU_TYPES)) {
+            event.register(ForgeRegistries.Keys.MENU_TYPES, helper -> helper.register(new ResourceLocation(Constants.MOD_ID, "backpack"), BPMenus.BACKPACK));
         } else if (event.getRegistryKey().equals(ForgeRegistries.Keys.SOUND_EVENTS)) {
             event.register(ForgeRegistries.Keys.SOUND_EVENTS, helper -> {
                 helper.register(new ResourceLocation(Constants.MOD_ID, "block.backpack.place"), BPSounds.BACKPACK_PLACE);

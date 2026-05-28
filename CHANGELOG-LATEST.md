@@ -1,3 +1,3 @@
 ### Added
 
-- Added config option to disable stealing from other players' backpacks.
+- Added a config option to adjust the backpack inventory size.

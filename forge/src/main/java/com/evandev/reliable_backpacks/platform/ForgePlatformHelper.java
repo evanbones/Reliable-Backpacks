@@ -6,11 +6,16 @@ import com.evandev.reliable_backpacks.config.ModConfig;
 import com.evandev.reliable_backpacks.networking.BackpackOpenPayload;
 import com.evandev.reliable_backpacks.platform.services.IPlatformHelper;
 import com.evandev.reliable_backpacks.registry.BPItems;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.FMLPaths;
@@ -98,5 +103,17 @@ public class ForgePlatformHelper implements IPlatformHelper {
             return CuriosCompat.isBackpackVisible(entity);
         }
         return true;
+    }
+
+    @Override
+    public void openMenu(ServerPlayer player, MenuProvider provider) {
+        player.openMenu(provider);
+    }
+
+    @Override
+    public <T extends AbstractContainerMenu> MenuType<T> createMenuType(IPlatformHelper.MenuFactory<T> factory) {
+        return IForgeMenuType.create(
+                (windowId, inv, data) -> factory.create(windowId, inv)
+        );
     }
 }

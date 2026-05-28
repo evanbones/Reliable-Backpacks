@@ -1,5 +1,6 @@
 package com.evandev.reliable_backpacks.common.items;
 
+import com.evandev.reliable_backpacks.config.ModConfig;
 import com.evandev.reliable_backpacks.networking.BackpackOpenPayload;
 import com.evandev.reliable_backpacks.platform.Services;
 import com.evandev.reliable_backpacks.registry.BPItems;
@@ -10,7 +11,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.SimpleContainer;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -24,19 +24,33 @@ public class BackpackItemContainer extends SimpleContainer {
     Level level;
 
     public BackpackItemContainer(LivingEntity target, Player player) {
-        super(27);
+        super(ModConfig.get().backpackRows * 9);
         this.target = target;
         this.player = player;
         this.itemStack = Services.PLATFORM.getBackpack(target);
         this.level = target.level();
 
+        NonNullList<ItemStack> temp = NonNullList.withSize(256, ItemStack.EMPTY);
         CompoundTag tag = this.itemStack.getTagElement("BlockEntityTag");
         if (tag != null && tag.contains("Items", 9)) {
-            NonNullList<ItemStack> items = NonNullList.withSize(27, ItemStack.EMPTY);
-            ContainerHelper.loadAllItems(tag, items);
-            for (int i = 0; i < items.size(); i++) {
-                this.setItem(i, items.get(i));
+            ContainerHelper.loadAllItems(tag, temp);
+        }
+
+        boolean overflowDropped = false;
+        for (int i = 0; i < temp.size(); i++) {
+            ItemStack stack = temp.get(i);
+            if (!stack.isEmpty()) {
+                if (i < this.getContainerSize()) {
+                    this.setItem(i, stack);
+                } else if (!this.level.isClientSide()) {
+                    this.target.spawnAtLocation(stack);
+                    overflowDropped = true;
+                }
             }
+        }
+
+        if (overflowDropped) {
+            this.setChanged();
         }
     }
 
@@ -47,7 +61,7 @@ public class BackpackItemContainer extends SimpleContainer {
     @Override
     public void setChanged() {
         CompoundTag tag = Services.PLATFORM.getBackpack(target).getOrCreateTagElement("BlockEntityTag");
-        NonNullList<ItemStack> items = NonNullList.withSize(27, ItemStack.EMPTY);
+        NonNullList<ItemStack> items = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
         for (int i = 0; i < this.getContainerSize(); i++) {
             items.set(i, this.getItem(i));
         }

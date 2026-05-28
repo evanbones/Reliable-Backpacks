@@ -1,6 +1,7 @@
 package com.evandev.reliable_backpacks.client;
 
 import com.evandev.reliable_backpacks.Constants;
+import com.evandev.reliable_backpacks.client.gui.BackpackScreen;
 import com.evandev.reliable_backpacks.client.models.BackpackModel;
 import com.evandev.reliable_backpacks.client.models.variants.OtherBackpackModel;
 import com.evandev.reliable_backpacks.client.rendering.BackpackBlockRenderer;
@@ -10,7 +11,9 @@ import com.evandev.reliable_backpacks.networking.BackpackPayloadHandler;
 import com.evandev.reliable_backpacks.registry.BPBlockEntities;
 import com.evandev.reliable_backpacks.registry.BPItems;
 import com.evandev.reliable_backpacks.registry.BPLayers;
+import com.evandev.reliable_backpacks.registry.BPMenus;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.entity.ArmorStandRenderer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.client.renderer.item.ItemProperties;
@@ -71,6 +74,8 @@ public class ReliableBackpacksClient {
                         return stack.getTagElement("display") != null && stack.getTagElement("display").contains("color", 99) ? 1.0F : 0.0F;
                     }
             );
+
+            MenuScreens.register(BPMenus.BACKPACK, BackpackScreen::new);
         });
     }
 

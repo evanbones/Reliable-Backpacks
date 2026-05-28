@@ -1,8 +1,13 @@
 package com.evandev.reliable_backpacks.platform.services;
 
 import com.evandev.reliable_backpacks.networking.BackpackOpenPayload;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 
 import java.nio.file.Path;
@@ -70,7 +75,19 @@ public interface IPlatformHelper {
     default void handleBackpackOpenPayload(BackpackOpenPayload payload) {
     }
 
+    void openMenu(ServerPlayer player, MenuProvider provider);
+
     default boolean isBackpackVisible(LivingEntity entity) {
         return true;
+    }
+
+    /**
+     * Creates a MenuType delegating to the platform-specific implementation.
+     */
+    <T extends AbstractContainerMenu> MenuType<T> createMenuType(MenuFactory<T> factory);
+
+    @FunctionalInterface
+    interface MenuFactory<T extends AbstractContainerMenu> {
+        T create(int windowId, Inventory inv);
     }
 }

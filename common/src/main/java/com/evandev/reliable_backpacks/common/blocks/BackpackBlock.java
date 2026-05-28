@@ -1,10 +1,12 @@
 package com.evandev.reliable_backpacks.common.blocks;
 
+import com.evandev.reliable_backpacks.platform.Services;
 import com.evandev.reliable_backpacks.registry.BPBlockEntities;
 import com.evandev.reliable_backpacks.registry.BPSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -109,7 +111,7 @@ public class BackpackBlock extends BaseEntityBlock implements Equipable, EntityB
         } else {
             BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof BackpackBlockEntity backpackBlockEntity) {
-                player.openMenu(backpackBlockEntity);
+                Services.PLATFORM.openMenu((ServerPlayer) player, backpackBlockEntity);
                 backpackBlockEntity.onOpen(player);
                 return InteractionResult.CONSUME;
             } else {

@@ -6,6 +6,7 @@
   "config.reliable_backpacks.enable_curios_integration": "Enable Curios Integration",
   "config.reliable_backpacks.enable_trinkets_integration": "Enable Trinkets Integration",
   "config.reliable_backpacks.enable_entity_stealing": "Enable Stealing from Equipped Backpacks",
+  "config.reliable_backpacks.backpack_rows": "Backpack Inventory Rows",
   "subtitles.reliable_backpacks.backpack.place": "Backpack placed",
   "subtitles.reliable_backpacks.backpack.open": "Backpack opens",
   "subtitles.reliable_backpacks.backpack.close": "Backpack closes",

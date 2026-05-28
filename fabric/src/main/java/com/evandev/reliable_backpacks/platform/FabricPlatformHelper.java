@@ -9,14 +9,23 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
+import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
 
@@ -101,5 +110,31 @@ public class FabricPlatformHelper implements IPlatformHelper {
         if (entity.getItemBySlot(EquipmentSlot.CHEST).is(BPItems.BACKPACK)) {
             entity.setItemSlot(EquipmentSlot.CHEST, ItemStack.EMPTY);
         }
+    }
+
+    @Override
+    public void openMenu(ServerPlayer player, MenuProvider provider) {
+        player.openMenu(new ExtendedScreenHandlerFactory() {
+            @Override
+            public void writeScreenOpeningData(ServerPlayer player, FriendlyByteBuf buf) {
+            }
+
+            @Override
+            public @NotNull Component getDisplayName() {
+                return provider.getDisplayName();
+            }
+
+            @Override
+            public AbstractContainerMenu createMenu(int syncId, @NotNull Inventory inv, @NotNull Player player) {
+                return provider.createMenu(syncId, inv, player);
+            }
+        });
+    }
+
+    @Override
+    public <T extends AbstractContainerMenu> MenuType<T> createMenuType(IPlatformHelper.MenuFactory<T> factory) {
+        return new ExtendedScreenHandlerType<>(
+                (syncId, inv, buf) -> factory.create(syncId, inv)
+        );
     }
 }
