@@ -1,5 +1,7 @@
 package com.evandev.reliable_backpacks.common.blocks;
 
+import com.evandev.reliable_backpacks.common.menus.BackpackMenu;
+import com.evandev.reliable_backpacks.config.ModConfig;
 import com.evandev.reliable_backpacks.registry.BPBlockEntities;
 import com.evandev.reliable_backpacks.registry.BPSounds;
 import com.evandev.reliable_backpacks.registry.BPTags;
@@ -13,10 +15,12 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.Containers;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ShulkerBoxMenu;
+import net.minecraft.world.inventory.ChestMenu;
+import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.level.Level;
@@ -39,7 +43,7 @@ public class BackpackBlockEntity extends RandomizableContainerBlockEntity {
 
     public BackpackBlockEntity(BlockPos pos, BlockState blockState) {
         super(BPBlockEntities.BACKPACK, pos, blockState);
-        this.itemStacks = NonNullList.withSize(27, ItemStack.EMPTY);
+        this.itemStacks = NonNullList.withSize(ModConfig.get().backpackRows * 9, ItemStack.EMPTY);
         this.newlyPlaced = true;
     }
 
@@ -64,6 +68,36 @@ public class BackpackBlockEntity extends RandomizableContainerBlockEntity {
         if (blockEntity.floatTicks == 90) {
             blockEntity.floatTicks = 0;
         }
+
+        int expectedSize = ModConfig.get().backpackRows * 9;
+        if (blockEntity.itemStacks.size() != expectedSize) {
+            NonNullList<ItemStack> newStacks = NonNullList.withSize(expectedSize, ItemStack.EMPTY);
+            boolean changed = false;
+
+            for (int i = 0; i < blockEntity.itemStacks.size(); i++) {
+                ItemStack stack = blockEntity.itemStacks.get(i);
+                if (!stack.isEmpty()) {
+                    if (i < expectedSize) {
+                        newStacks.set(i, stack);
+                    } else {
+                        if (!level.isClientSide) {
+                            Containers.dropItemStack(level, pos.getX(), pos.getY() + 1, pos.getZ(), stack);
+                        }
+                        changed = true;
+                    }
+                }
+            }
+
+            blockEntity.itemStacks = newStacks;
+            if (changed || blockEntity.itemStacks.size() != expectedSize) {
+                blockEntity.setChanged();
+            }
+        }
+    }
+
+    @Override
+    protected @NotNull AbstractContainerMenu createMenu(int id, @NotNull Inventory player) {
+        return new BackpackMenu(id, player, this);
     }
 
     public int getColor() {
@@ -116,7 +150,7 @@ public class BackpackBlockEntity extends RandomizableContainerBlockEntity {
         return Component.translatable("container.backpack");
     }
 
-
+    @Override
     protected @NotNull NonNullList<ItemStack> getItems() {
         return this.itemStacks;
     }
@@ -125,9 +159,9 @@ public class BackpackBlockEntity extends RandomizableContainerBlockEntity {
         this.itemStacks = items;
     }
 
-
-    protected @NotNull AbstractContainerMenu createMenu(int id, @NotNull Inventory player) {
-        return new ShulkerBoxMenu(id, player, this);
+    @Override
+    public int getContainerSize() {
+        return this.itemStacks.size();
     }
 
     public ClientboundBlockEntityDataPacket getUpdatePacket() {
@@ -158,7 +192,9 @@ public class BackpackBlockEntity extends RandomizableContainerBlockEntity {
         return tag;
     }
 
+    @Override
     protected void applyImplicitComponents(BlockEntity.@NotNull DataComponentInput componentInput) {
+        this.itemStacks = NonNullList.withSize(256, ItemStack.EMPTY);
         super.applyImplicitComponents(componentInput);
         DyedItemColor dyedItemColor = componentInput.get(DataComponents.DYED_COLOR);
         this.color = dyedItemColor != null ? dyedItemColor.rgb() : 0;
@@ -172,7 +208,7 @@ public class BackpackBlockEntity extends RandomizableContainerBlockEntity {
     }
 
     public void loadFromTag(CompoundTag tag, HolderLookup.Provider levelRegistry) {
-        this.itemStacks = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
+        this.itemStacks = NonNullList.withSize(256, ItemStack.EMPTY);
         if (!this.tryLoadLootTable(tag) && tag.contains("Items", 9)) {
             ContainerHelper.loadAllItems(tag, this.itemStacks, levelRegistry);
         }
@@ -187,9 +223,5 @@ public class BackpackBlockEntity extends RandomizableContainerBlockEntity {
             return false;
         }
         return super.canPlaceItem(index, stack);
-    }
-
-    public int getContainerSize() {
-        return this.itemStacks.size();
     }
 }

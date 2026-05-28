@@ -30,6 +30,9 @@ public class ModConfig {
     @SerializedName("enable_entity_stealing")
     public boolean enableEntityStealing = true;
 
+    @SerializedName("backpack_rows")
+    public int backpackRows = 3;
+
     public static ModConfig get() {
         if (INSTANCE == null) {
             load();

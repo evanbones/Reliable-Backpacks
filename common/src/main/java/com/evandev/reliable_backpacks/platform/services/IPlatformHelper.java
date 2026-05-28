@@ -3,7 +3,10 @@ package com.evandev.reliable_backpacks.platform.services;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 
 import java.nio.file.Path;
@@ -83,4 +86,14 @@ public interface IPlatformHelper {
      * Checks if the equipped backpack should be rendered (e.g. not hidden by Accessories toggle).
      */
     boolean isBackpackVisible(LivingEntity livingEntity);
+
+    /**
+     * Creates a MenuType delegating to the platform-specific implementation.
+     */
+    <T extends AbstractContainerMenu> MenuType<T> createMenuType(MenuFactory<T> factory);
+
+    @FunctionalInterface
+    interface MenuFactory<T extends AbstractContainerMenu> {
+        T create(int windowId, Inventory inv);
+    }
 }

@@ -8,13 +8,17 @@ import com.evandev.reliable_backpacks.registry.BPItems;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 
 import java.nio.file.Path;
@@ -109,5 +113,13 @@ public class FabricPlatformHelper implements IPlatformHelper {
     @Override
     public boolean isBackpackEquipped(LivingEntity livingEntity) {
         return !getEquippedBackpack(livingEntity).isEmpty();
+    }
+
+    @Override
+    public <T extends AbstractContainerMenu> MenuType<T> createMenuType(IPlatformHelper.MenuFactory<T> factory) {
+        return new ExtendedScreenHandlerType<>(
+                (syncId, inv, data) -> factory.create(syncId, inv),
+                StreamCodec.unit(null)
+        );
     }
 }

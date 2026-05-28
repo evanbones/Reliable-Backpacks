@@ -41,6 +41,11 @@ public class ClothConfigIntegration {
                 .setSaveConsumer(newValue -> config.enableEntityStealing = newValue)
                 .build());
 
+        general.addEntry(entryBuilder.startIntSlider(Component.translatable("config.reliable_backpacks.backpack_rows"), config.backpackRows, 1, 6)
+                .setDefaultValue(3)
+                .setSaveConsumer(newValue -> config.backpackRows = newValue)
+                .build());
+
         return builder.build();
     }
 }

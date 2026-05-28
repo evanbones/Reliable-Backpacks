@@ -10,11 +10,14 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.fml.loading.FMLPaths;
+import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.nio.file.Path;
@@ -111,5 +114,10 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
     @Override
     public boolean isBackpackEquipped(LivingEntity livingEntity) {
         return !getEquippedBackpack(livingEntity).isEmpty();
+    }
+
+    @Override
+    public <T extends AbstractContainerMenu> MenuType<T> createMenuType(IPlatformHelper.MenuFactory<T> factory) {
+        return IMenuTypeExtension.create((windowId, inv, data) -> factory.create(windowId, inv));
     }
 }

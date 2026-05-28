@@ -1,6 +1,7 @@
 package com.evandev.reliable_backpacks.client;
 
 import com.evandev.reliable_backpacks.Constants;
+import com.evandev.reliable_backpacks.client.gui.BackpackScreen;
 import com.evandev.reliable_backpacks.client.models.BackpackModel;
 import com.evandev.reliable_backpacks.client.models.variants.OtherBackpackModel;
 import com.evandev.reliable_backpacks.client.rendering.BackpackBlockRenderer;
@@ -8,6 +9,8 @@ import com.evandev.reliable_backpacks.client.rendering.BackpackLayer;
 import com.evandev.reliable_backpacks.registry.BPBlockEntities;
 import com.evandev.reliable_backpacks.registry.BPItems;
 import com.evandev.reliable_backpacks.registry.BPLayers;
+import com.evandev.reliable_backpacks.registry.BPMenus;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.entity.ArmorStandRenderer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.client.renderer.item.ItemProperties;
@@ -18,6 +21,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.component.DyedItemColor;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 
 public class ReliableBackpacksClient {
     public static void registerLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
@@ -43,6 +47,10 @@ public class ReliableBackpacksClient {
                     (stack, level, entity, seed) -> stack.has(DataComponents.DYED_COLOR) ? 1.0F : 0.0F
             );
         });
+    }
+
+    public static void registerScreens(RegisterMenuScreensEvent event) {
+        event.register(BPMenus.BACKPACK, BackpackScreen::new);
     }
 
     public static void addPlayerLayers(EntityRenderersEvent.AddLayers event) {

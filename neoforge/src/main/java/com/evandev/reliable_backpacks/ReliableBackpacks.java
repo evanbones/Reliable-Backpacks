@@ -31,6 +31,7 @@ public class ReliableBackpacks {
             modEventBus.addListener(ReliableBackpacksClient::registerLayers);
             modEventBus.addListener(ReliableBackpacksClient::registerItemColors);
             modEventBus.addListener(ReliableBackpacksClient::onClientSetup);
+            modEventBus.addListener(ReliableBackpacksClient::registerScreens);
             modEventBus.addListener(ReliableBackpacksClient::registerRenderers);
             modEventBus.addListener(ReliableBackpacksClient::addPlayerLayers);
         }

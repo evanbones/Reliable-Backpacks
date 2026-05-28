@@ -1,19 +1,17 @@
 package com.evandev.reliable_backpacks.common.events;
 
 import com.evandev.reliable_backpacks.common.items.BackpackItemContainer;
+import com.evandev.reliable_backpacks.common.menus.BackpackMenu;
 import com.evandev.reliable_backpacks.config.ModConfig;
 import com.evandev.reliable_backpacks.platform.Services;
 import com.evandev.reliable_backpacks.registry.BPItems;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.ShulkerBoxMenu;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.Objects;
@@ -34,11 +32,10 @@ public class EntityInteractionEvents {
                 Objects.requireNonNull(player.getServer()).execute(() -> {
                     if (player.distanceTo(target) < 5) {
                         BackpackItemContainer container = new BackpackItemContainer(target, player);
-                        if (!item.has(DataComponents.CONTAINER)) {
-                            item.set(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
-                        }
-                        Objects.requireNonNull(item.get(DataComponents.CONTAINER)).copyInto(container.getItems());
-                        player.openMenu(new SimpleMenuProvider((a, b, c) -> new ShulkerBoxMenu(a, player.getInventory(), container), Component.translatable("container.backpack")));
+
+                        player.openMenu(new SimpleMenuProvider((id, playerInv, playerEntity) -> {
+                            return new BackpackMenu(id, playerInv, container);
+                        }, Component.translatable("container.backpack")));
                     }
                 });
             }

@@ -1,14 +1,15 @@
 package com.evandev.reliable_backpacks.common.items;
 
+import com.evandev.reliable_backpacks.config.ModConfig;
 import com.evandev.reliable_backpacks.networking.BackpackOpenPayload;
 import com.evandev.reliable_backpacks.platform.Services;
 import com.evandev.reliable_backpacks.registry.BPItems;
 import com.evandev.reliable_backpacks.registry.BPSounds;
 import com.evandev.reliable_backpacks.registry.BPTags;
+import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.SimpleContainer;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -23,11 +24,32 @@ public class BackpackItemContainer extends SimpleContainer {
     Level level;
 
     public BackpackItemContainer(LivingEntity target, Player player) {
-        super(27);
+        super(ModConfig.get().backpackRows * 9);
         this.target = target;
         this.player = player;
         this.itemStack = Services.PLATFORM.getEquippedBackpack(target);
         this.level = target.level();
+
+        ItemContainerContents contents = this.itemStack.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
+        NonNullList<ItemStack> temp = NonNullList.withSize(256, ItemStack.EMPTY);
+        contents.copyInto(temp);
+
+        boolean overflowDropped = false;
+        for (int i = 0; i < temp.size(); i++) {
+            ItemStack stack = temp.get(i);
+            if (!stack.isEmpty()) {
+                if (i < this.getContainerSize()) {
+                    this.setItem(i, stack);
+                } else if (!this.level.isClientSide()) {
+                    this.target.spawnAtLocation(stack);
+                    overflowDropped = true;
+                }
+            }
+        }
+
+        if (overflowDropped) {
+            this.setChanged();
+        }
     }
 
     public boolean stillValid(@NotNull Player player) {
