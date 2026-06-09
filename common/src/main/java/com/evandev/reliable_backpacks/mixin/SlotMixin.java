@@ -1,5 +1,7 @@
 package com.evandev.reliable_backpacks.mixin;
 
+import com.evandev.reliable_backpacks.config.ModConfig;
+import com.evandev.reliable_backpacks.platform.Services;
 import com.evandev.reliable_backpacks.registry.BPItems;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.entity.player.Inventory;
@@ -18,13 +20,21 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class SlotMixin {
 
     @Unique
-    private static boolean isNonEmptyBackpack(ItemStack stack) {
+    private static boolean backpacks$isNonEmptyBackpack(ItemStack stack) {
         if (!stack.is(BPItems.BACKPACK)) return false;
 
         ItemContainerContents contents = stack.get(DataComponents.CONTAINER);
         if (contents == null) return false;
 
         return contents.nonEmptyItems().iterator().hasNext();
+    }
+
+    @Unique
+    private static boolean backpacks$hasBackSlotMod() {
+        ModConfig config = ModConfig.get();
+        return (config.enableCuriosIntegration && Services.PLATFORM.isModLoaded("curios"))
+                || (config.enableTrinketsIntegration && Services.PLATFORM.isModLoaded("trinkets"))
+                || (config.enableAccessoriesIntegration && Services.PLATFORM.isModLoaded("accessories"));
     }
 
     @Shadow
@@ -36,8 +46,8 @@ public abstract class SlotMixin {
 
         if (thisSlot.container instanceof Inventory) {
             int slotIndex = thisSlot.getContainerSlot();
-            if (slotIndex < 36 || slotIndex == 40) {
-                if (isNonEmptyBackpack(stack)) {
+            if (slotIndex < 36 || (slotIndex == 38 && backpacks$hasBackSlotMod()) || slotIndex == 40) {
+                if (backpacks$isNonEmptyBackpack(stack)) {
                     cir.setReturnValue(false);
                 }
             }
@@ -51,7 +61,7 @@ public abstract class SlotMixin {
         if (thisSlot.container instanceof Inventory) {
             int slotIndex = thisSlot.getContainerSlot();
             if (slotIndex < 36 || slotIndex == 40) {
-                if (isNonEmptyBackpack(thisSlot.getItem())) {
+                if (backpacks$isNonEmptyBackpack(thisSlot.getItem())) {
                     cir.setReturnValue(false);
                 }
             }

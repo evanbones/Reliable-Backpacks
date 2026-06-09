@@ -8,6 +8,7 @@ import com.evandev.reliable_backpacks.registry.BPSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.TraceableEntity;
@@ -75,29 +76,24 @@ public abstract class ItemEntityMixin extends Entity implements TraceableEntity 
             }
 
             Level level = this.level();
-            BlockPos pos = this.blockPosition();
-            BlockPos targetPos = level.getBlockState(pos).canBeReplaced() ? pos : pos.above();
+            BlockPos pos = this.getOnPos();
+            boolean isUnobstructed = level.getBlockState(pos.above()).canBeReplaced() &&
+                    (!level.getFluidState(pos.above()).isSource() || !level.getBlockState(pos.above(2)).canBeReplaced());
 
-            boolean isUnobstructed = !level.isOutsideBuildHeight(targetPos) && level.getBlockState(targetPos).canBeReplaced() &&
-                    (!level.getFluidState(targetPos).isSource() || !level.getBlockState(targetPos.above()).canBeReplaced());
-
-            if ((this.onGround() || level.getFluidState(pos).isSource()) && isUnobstructed) {
+            if ((!level.getBlockState(pos).is(BlockTags.REPLACEABLE) || level.getFluidState(pos).isSource()) && isUnobstructed) {
 
                 BlockState state = BPBlocks.BACKPACK.defaultBlockState()
                         .setValue(FACING, this.getDirection())
-                        .setValue(FLOATING, level.getFluidState(targetPos.below()).isSource() && !level.getFluidState(targetPos).isSource())
-                        .setValue(WATERLOGGED, level.getFluidState(targetPos).getType() == Fluids.WATER);
+                        .setValue(FLOATING, level.getFluidState(pos).isSource() && !level.getFluidState(pos.above()).isSource())
+                        .setValue(WATERLOGGED, level.getFluidState(pos.above()).getType() == Fluids.WATER);
 
-                BackpackBlockEntity blockEntity = new BackpackBlockEntity(targetPos, state);
+                BackpackBlockEntity blockEntity = new BackpackBlockEntity(pos.above(), state);
                 blockEntity.applyComponentsFromItemStack(itemStack);
 
-                blockEntity.newlyPlaced = true;
-                blockEntity.placeTicks = 0;
-
                 if (!level.isClientSide) {
-                    level.setBlockAndUpdate(targetPos, state);
+                    level.setBlockAndUpdate(pos.above(), state);
                     level.setBlockEntity(blockEntity);
-                    level.playSound(null, targetPos, BPSounds.BACKPACK_PLACE.value(), SoundSource.BLOCKS, 1.0F, 1.0F);
+                    level.playSound(null, pos.above(), BPSounds.BACKPACK_PLACE.value(), SoundSource.BLOCKS, 1.0F, 1.0F);
                 }
 
                 this.discard();
