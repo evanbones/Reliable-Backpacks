@@ -7,7 +7,6 @@ import com.evandev.reliable_backpacks.registry.BPItems;
 import com.evandev.reliable_backpacks.registry.BPSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
@@ -16,39 +15,26 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.shapes.CollisionContext;
-
-import static com.evandev.reliable_backpacks.common.blocks.BackpackBlock.FACING;
-import static com.evandev.reliable_backpacks.common.blocks.BackpackBlock.WATERLOGGED;
 
 public class BackpackPickupEvents {
 
     public static InteractionResult onRightClickBlock(Player player, Level level, InteractionHand hand, BlockHitResult hitResult) {
         BlockPos pos = hitResult.getBlockPos();
-        BlockState clickedState = level.getBlockState(pos);
-        Block block = clickedState.getBlock();
+        Block block = level.getBlockState(pos).getBlock();
         BlockEntity blockEntity = level.getBlockEntity(pos);
 
-        ItemStack heldItem = player.getItemInHand(hand);
         ItemStack chestSlotItem = Services.PLATFORM.getBackpack(player);
 
         boolean hasBackpack = !chestSlotItem.isEmpty();
         boolean canEquip = Services.PLATFORM.canEquipBackpack(player);
 
-        BlockPos targetPos = clickedState.canBeReplaced() ? pos : pos.relative(hitResult.getDirection());
-        boolean isAbove = (targetPos.getY() > player.getEyeY());
-        boolean isUnobstructed = !level.isOutsideBuildHeight(targetPos) && level.isUnobstructed(BPBlocks.BACKPACK.defaultBlockState(), targetPos,
-                CollisionContext.of(player)) && level.getBlockState(targetPos).canBeReplaced();
-
         // PICKUP
         if (player.isShiftKeyDown() && canEquip && !hasBackpack && block == BPBlocks.BACKPACK && blockEntity != null) {
-            player.swing(InteractionHand.MAIN_HAND);
             ItemStack itemstack = new ItemStack(BPBlocks.BACKPACK);
 
             if (blockEntity instanceof BackpackBlockEntity backpackEntity) {
@@ -77,47 +63,13 @@ public class BackpackPickupEvents {
 
         // PLACEMENT
         boolean isMainHand = hand == InteractionHand.MAIN_HAND;
-        boolean handsEmpty = player.getMainHandItem().isEmpty() && player.getOffhandItem().isEmpty();
-        if (isMainHand && player.isShiftKeyDown() && handsEmpty && hasBackpack && (hitResult.getDirection() == Direction.UP || level.getBlockState(pos).canBeReplaced()) && !isAbove && isUnobstructed) {
+        boolean mainHandEmpty = player.getMainHandItem().isEmpty();
 
-            BlockState state = BPBlocks.BACKPACK.defaultBlockState()
-                    .setValue(FACING, player.getDirection())
-                    .setValue(WATERLOGGED, level.getFluidState(targetPos).getType() == Fluids.WATER);
-
-            BackpackBlockEntity newBlockEntity = new BackpackBlockEntity(targetPos, state);
-
-            CompoundTag nbt = chestSlotItem.getTagElement("BlockEntityTag");
-            if (nbt != null) {
-                newBlockEntity.load(nbt);
+        if (isMainHand && player.isShiftKeyDown() && mainHandEmpty && hasBackpack && hitResult.getDirection() == Direction.UP) {
+            if (!chestSlotItem.isEmpty()) {
+                BlockPlaceContext context = new BlockPlaceContext(player, hand, chestSlotItem, hitResult);
+                BPItems.BACKPACK.place(context);
             }
-
-            CompoundTag itemTag = chestSlotItem.getTag();
-            if (itemTag != null) {
-                CompoundTag copy = itemTag.copy();
-                copy.remove("BlockEntityTag");
-                newBlockEntity.setBackpackItemTag(copy);
-            }
-
-            CompoundTag displayTag = chestSlotItem.getTagElement("display");
-            if (displayTag != null && displayTag.contains("color", 99)) {
-                newBlockEntity.setColor(displayTag.getInt("color"));
-            }
-
-            newBlockEntity.newlyPlaced = true;
-            newBlockEntity.placeTicks = 0;
-
-            if (!level.isClientSide) {
-                level.setBlockAndUpdate(targetPos, state);
-                level.setBlockEntity(newBlockEntity);
-
-                Services.PLATFORM.unequipBackpack(player);
-                level.playSound(null, targetPos, BPSounds.BACKPACK_PLACE, SoundSource.BLOCKS, 1.0F, 1.0F);
-            } else {
-                for (int i = 0; i < 4; i++) {
-                    level.addParticle(ParticleTypes.CLOUD, targetPos.getX() + 0.5D, targetPos.getY() + 0.2D, targetPos.getZ() + 0.5D, 0.0D, 0.02D, 0.0D);
-                }
-            }
-
             return InteractionResult.sidedSuccess(level.isClientSide);
         }
         return InteractionResult.PASS;

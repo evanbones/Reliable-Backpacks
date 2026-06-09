@@ -73,20 +73,18 @@ public abstract class ItemEntityMixin extends Entity implements TraceableEntity 
             }
 
             Level level = this.level();
-            BlockPos pos = this.blockPosition();
-            BlockPos targetPos = level.getBlockState(pos).canBeReplaced() ? pos : pos.above();
-
-            boolean isUnobstructed = !level.isOutsideBuildHeight(targetPos) && level.getBlockState(targetPos).canBeReplaced() &&
-                    (!level.getFluidState(targetPos).isSource() || !level.getBlockState(targetPos.above()).canBeReplaced());
+            BlockPos pos = this.getOnPos();
+            boolean isUnobstructed = level.getBlockState(pos.above()).canBeReplaced() &&
+                    (!level.getFluidState(pos.above()).isSource() || !level.getBlockState(pos.above(2)).canBeReplaced());
 
             if ((this.onGround() || level.getFluidState(pos).isSource()) && isUnobstructed) {
 
                 BlockState state = BPBlocks.BACKPACK.defaultBlockState()
                         .setValue(FACING, this.getDirection())
-                        .setValue(FLOATING, level.getFluidState(targetPos.below()).isSource() && !level.getFluidState(targetPos).isSource())
-                        .setValue(WATERLOGGED, level.getFluidState(targetPos).getType() == Fluids.WATER);
+                        .setValue(FLOATING, level.getFluidState(pos).isSource() && !level.getFluidState(pos.above()).isSource())
+                        .setValue(WATERLOGGED, level.getFluidState(pos.above()).getType() == Fluids.WATER);
 
-                BackpackBlockEntity blockEntity = new BackpackBlockEntity(targetPos, state);
+                BackpackBlockEntity blockEntity = new BackpackBlockEntity(pos.above(), state);
 
                 CompoundTag nbt = itemStack.getTagElement("BlockEntityTag");
                 if (nbt != null) {
@@ -109,9 +107,9 @@ public abstract class ItemEntityMixin extends Entity implements TraceableEntity 
                 blockEntity.placeTicks = 0;
 
                 if (!level.isClientSide) {
-                    level.setBlockAndUpdate(targetPos, state);
+                    level.setBlockAndUpdate(pos.above(), state);
                     level.setBlockEntity(blockEntity);
-                    level.playSound(null, targetPos, BPSounds.BACKPACK_PLACE, SoundSource.BLOCKS, 1.0F, 1.0F);
+                    level.playSound(null, pos.above(), BPSounds.BACKPACK_PLACE, SoundSource.BLOCKS, 1.0F, 1.0F);
                 }
 
                 this.discard();

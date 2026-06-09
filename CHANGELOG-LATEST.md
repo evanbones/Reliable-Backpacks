@@ -1,3 +1,4 @@
-### Added
+### Fixed
 
-- Added a config option to adjust the backpack inventory size.
+- Fixed issues with Sable sub-levels.
+- Backpacks can now be placed even when the offhand has an item.

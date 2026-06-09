@@ -1,5 +1,7 @@
 package com.evandev.reliable_backpacks.mixin;
 
+import com.evandev.reliable_backpacks.config.ModConfig;
+import com.evandev.reliable_backpacks.platform.Services;
 import com.evandev.reliable_backpacks.registry.BPItems;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Inventory;
@@ -28,21 +30,30 @@ public abstract class SlotMixin {
         Slot thisSlot = (Slot) (Object) this;
 
         if (thisSlot.container instanceof Inventory) {
-            if (isNonEmptyBackpack(stack)) {
-                cir.setReturnValue(false);
+            int slotIndex = thisSlot.getContainerSlot();
+            if (slotIndex < 36 || (slotIndex == 38 && backpacks$hasBackSlotMod()) || slotIndex == 40) {
+                if (backpacks$isNonEmptyBackpack(stack)) {
+                    cir.setReturnValue(false);
+                }
             }
         }
     }
 
     @Inject(method = "mayPickup", at = @At("HEAD"), cancellable = true)
     public void mayPickup(Player player, CallbackInfoReturnable<Boolean> cir) {
-        if (isNonEmptyBackpack(this.getItem())) {
-            cir.setReturnValue(false);
+        Slot thisSlot = (Slot) (Object) this;
+        if (thisSlot.container instanceof Inventory) {
+            int slotIndex = thisSlot.getContainerSlot();
+            if (slotIndex < 36 || slotIndex == 40) {
+                if (backpacks$isNonEmptyBackpack(thisSlot.getItem())) {
+                    cir.setReturnValue(false);
+                }
+            }
         }
     }
 
     @Unique
-    private boolean isNonEmptyBackpack(ItemStack stack) {
+    private static boolean backpacks$isNonEmptyBackpack(ItemStack stack) {
         if (!stack.is(BPItems.BACKPACK)) return false;
 
         boolean hasContainer = stack.hasTag() && stack.getTag().contains("BlockEntityTag");
@@ -50,5 +61,12 @@ public abstract class SlotMixin {
 
         CompoundTag bet = stack.getTag().getCompound("BlockEntityTag");
         return bet.contains("Items") && !bet.getList("Items", 10).isEmpty();
+    }
+
+    @Unique
+    private static boolean backpacks$hasBackSlotMod() {
+        ModConfig config = ModConfig.get();
+        return (config.enableCuriosIntegration && Services.PLATFORM.isModLoaded("curios"))
+                || (config.enableTrinketsIntegration && Services.PLATFORM.isModLoaded("trinkets"));
     }
 }
