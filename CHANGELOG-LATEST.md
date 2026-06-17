@@ -1,3 +1,3 @@
 ### Fixed
 
-- Fixed backpack menu rendering.
+- Fixed right-click backpack equipping behaving strangely with Curios.

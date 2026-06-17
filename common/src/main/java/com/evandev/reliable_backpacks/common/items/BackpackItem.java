@@ -1,5 +1,6 @@
 package com.evandev.reliable_backpacks.common.items;
 
+import com.evandev.reliable_backpacks.platform.Services;
 import com.evandev.reliable_backpacks.registry.BPSounds;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionHand;
@@ -15,6 +16,7 @@ import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.NotNull;
 
 public class BackpackItem extends BlockItem implements Equipable, DyeableLeatherItem {
+
     public BackpackItem(Block block, Properties properties) {
         super(block, properties);
     }
@@ -35,6 +37,19 @@ public class BackpackItem extends BlockItem implements Equipable, DyeableLeather
 
     @Override
     public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand hand) {
-        return this.swapWithEquipmentSlot(this, level, player, hand);
+        ItemStack itemStack = player.getItemInHand(hand);
+
+        if (Services.PLATFORM.canEquipBackpack(player)) {
+            if (!level.isClientSide()) {
+                ItemStack copy = itemStack.copy();
+                copy.setCount(1);
+                Services.PLATFORM.equipBackpack(player, copy);
+                itemStack.shrink(1);
+            }
+            player.playSound(this.getEquipSound(), 1.0F, 1.0F);
+            return InteractionResultHolder.sidedSuccess(itemStack, level.isClientSide());
+        }
+
+        return InteractionResultHolder.pass(itemStack);
     }
 }
