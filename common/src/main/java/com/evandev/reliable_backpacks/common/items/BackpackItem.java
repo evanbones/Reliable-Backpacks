@@ -1,5 +1,6 @@
 package com.evandev.reliable_backpacks.common.items;
 
+import com.evandev.reliable_backpacks.config.ModConfig;
 import com.evandev.reliable_backpacks.platform.Services;
 import com.evandev.reliable_backpacks.registry.BPSounds;
 import net.minecraft.core.Holder;
@@ -31,6 +32,7 @@ public class BackpackItem extends BlockItem implements Equipable {
 
     @Override
     public @NotNull EquipmentSlot getEquipmentSlot() {
+        if (!ModConfig.get().enableChestSlot) return EquipmentSlot.MAINHAND;
         return EquipmentSlot.CHEST;
     }
 

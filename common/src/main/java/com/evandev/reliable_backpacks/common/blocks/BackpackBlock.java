@@ -1,5 +1,6 @@
 package com.evandev.reliable_backpacks.common.blocks;
 
+import com.evandev.reliable_backpacks.config.ModConfig;
 import com.evandev.reliable_backpacks.registry.BPBlockEntities;
 import com.evandev.reliable_backpacks.registry.BPSounds;
 import com.mojang.serialization.MapCodec;
@@ -81,6 +82,7 @@ public class BackpackBlock extends BaseEntityBlock implements Equipable, EntityB
     }
 
     public @NotNull EquipmentSlot getEquipmentSlot() {
+        if (!ModConfig.get().enableChestSlot) return EquipmentSlot.MAINHAND;
         return EquipmentSlot.CHEST;
     }
 

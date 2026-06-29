@@ -1,7 +1,6 @@
 package com.evandev.reliable_backpacks.compat;
 
 import com.evandev.reliable_backpacks.registry.BPItems;
-import io.wispforest.accessories.api.AccessoriesAPI;
 import io.wispforest.accessories.api.AccessoriesCapability;
 import io.wispforest.accessories.api.AccessoriesContainer;
 import io.wispforest.accessories.api.slot.SlotEntryReference;
@@ -17,17 +16,7 @@ public class AccessoriesHelper {
     public static boolean canEquipBackpack(Player player) {
         AccessoriesCapability capability = AccessoriesCapability.get(player);
         if (capability != null) {
-            AccessoriesContainer container = capability.getContainers().get("back");
-            if (container != null) {
-                for (int i = 0; i < container.getSize(); i++) {
-                    if (container.getAccessories().getItem(i).isEmpty()) {
-                        SlotReference ref = SlotReference.of(player, "back", i);
-                        if (AccessoriesAPI.canInsertIntoSlot(new ItemStack(BPItems.BACKPACK), ref)) {
-                            return true;
-                        }
-                    }
-                }
-            }
+            return capability.canEquipAccessory(new ItemStack(BPItems.BACKPACK), false) != null;
         }
         return false;
     }
@@ -35,18 +24,7 @@ public class AccessoriesHelper {
     public static boolean equipBackpack(Player player, ItemStack stack) {
         AccessoriesCapability capability = AccessoriesCapability.get(player);
         if (capability != null) {
-            AccessoriesContainer container = capability.getContainers().get("back");
-            if (container != null) {
-                for (int i = 0; i < container.getSize(); i++) {
-                    if (container.getAccessories().getItem(i).isEmpty()) {
-                        SlotReference ref = SlotReference.of(player, "back", i);
-                        if (AccessoriesAPI.canInsertIntoSlot(stack, ref)) {
-                            container.getAccessories().setItem(i, stack);
-                            return true;
-                        }
-                    }
-                }
-            }
+            return capability.attemptToEquipAccessory(stack) != null;
         }
         return false;
     }

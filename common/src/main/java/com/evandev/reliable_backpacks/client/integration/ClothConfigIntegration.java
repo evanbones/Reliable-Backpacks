@@ -41,6 +41,11 @@ public class ClothConfigIntegration {
                 .setSaveConsumer(newValue -> config.enableEntityStealing = newValue)
                 .build());
 
+        general.addEntry(entryBuilder.startBooleanToggle(Component.translatable("config.reliable_backpacks.enable_chest_slot"), config.enableChestSlot)
+                .setDefaultValue(true)
+                .setSaveConsumer(newValue -> config.enableChestSlot = newValue)
+                .build());
+
         general.addEntry(entryBuilder.startIntSlider(Component.translatable("config.reliable_backpacks.backpack_rows"), config.backpackRows, 1, 6)
                 .setDefaultValue(3)
                 .setSaveConsumer(newValue -> config.backpackRows = newValue)

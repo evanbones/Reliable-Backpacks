@@ -66,7 +66,10 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
         if (ModConfig.get().enableCuriosIntegration && isModLoaded("curios")) {
             if (CuriosHelper.canEquipBackpack(player)) return true;
         }
-        return player.getItemBySlot(EquipmentSlot.CHEST).isEmpty();
+        if (ModConfig.get().enableChestSlot) {
+            return player.getItemBySlot(EquipmentSlot.CHEST).isEmpty();
+        }
+        return false;
     }
 
     @Override
@@ -77,7 +80,9 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
         if (ModConfig.get().enableCuriosIntegration && isModLoaded("curios")) {
             if (CuriosHelper.equipBackpack(player, stack)) return;
         }
-        player.setItemSlot(EquipmentSlot.CHEST, stack);
+        if (ModConfig.get().enableChestSlot) {
+            player.setItemSlot(EquipmentSlot.CHEST, stack);
+        }
     }
 
     @Override
@@ -90,8 +95,11 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
             ItemStack curiosStack = CuriosHelper.getEquippedBackpack(livingEntity);
             if (!curiosStack.isEmpty()) return curiosStack;
         }
-        ItemStack chest = livingEntity.getItemBySlot(EquipmentSlot.CHEST);
-        return chest.is(BPItems.BACKPACK) ? chest : ItemStack.EMPTY;
+        if (ModConfig.get().enableChestSlot) {
+            ItemStack chest = livingEntity.getItemBySlot(EquipmentSlot.CHEST);
+            return chest.is(BPItems.BACKPACK) ? chest : ItemStack.EMPTY;
+        }
+        return ItemStack.EMPTY;
     }
 
     @Override
@@ -108,7 +116,10 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
             }
         }
 
-        return livingEntity.getItemBySlot(EquipmentSlot.CHEST).is(BPItems.BACKPACK);
+        if (ModConfig.get().enableChestSlot) {
+            return livingEntity.getItemBySlot(EquipmentSlot.CHEST).is(BPItems.BACKPACK);
+        }
+        return false;
     }
 
     @Override

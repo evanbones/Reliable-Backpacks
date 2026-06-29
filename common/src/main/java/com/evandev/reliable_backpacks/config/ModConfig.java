@@ -30,6 +30,9 @@ public class ModConfig {
     @SerializedName("enable_entity_stealing")
     public boolean enableEntityStealing = true;
 
+    @SerializedName("enable_chest_slot")
+    public boolean enableChestSlot = true;
+
     @SerializedName("backpack_rows")
     public int backpackRows = 3;
 

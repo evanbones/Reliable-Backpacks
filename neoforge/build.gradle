@@ -45,7 +45,7 @@ dependencies {
     implementation "me.shedaniel.cloth:cloth-config-neoforge:${cloth_config_version}"
 
     // Accessories
-    compileOnly "maven.modrinth:accessories:${accessories_version_neoforge}"
+    implementation "maven.modrinth:accessories:${accessories_version_neoforge}"
     runtimeOnly "maven.modrinth:owo-lib:NMCHU6DZ"
 
     // Optional Dependencies
@@ -53,7 +53,7 @@ dependencies {
     compileOnly "maven.modrinth:spyglass-improvements:${spyglass_improvements_version}+neoforge"
     compileOnly "maven.modrinth:figura:${figura_version_neoforge}"
     compileOnly "maven.modrinth:vanity-core:5.0.2"
-    implementation "maven.modrinth:curios:${curios_version}"
+    compileOnly "maven.modrinth:curios:${curios_version}"
 
     jarJar(implementation("com.moulberry:mixinconstraints:1.0.7") {
         exclude group: "org.slf4j",

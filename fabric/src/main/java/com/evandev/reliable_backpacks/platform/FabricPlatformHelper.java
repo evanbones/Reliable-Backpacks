@@ -70,7 +70,10 @@ public class FabricPlatformHelper implements IPlatformHelper {
         if (ModConfig.get().enableTrinketsIntegration && isModLoaded("trinkets")) {
             if (TrinketsHelper.canEquipBackpack(player)) return true;
         }
-        return player.getItemBySlot(EquipmentSlot.CHEST).isEmpty();
+        if (ModConfig.get().enableChestSlot) {
+            return player.getItemBySlot(EquipmentSlot.CHEST).isEmpty();
+        }
+        return false;
     }
 
     @Override
@@ -81,7 +84,9 @@ public class FabricPlatformHelper implements IPlatformHelper {
         if (ModConfig.get().enableTrinketsIntegration && isModLoaded("trinkets")) {
             if (TrinketsHelper.equipBackpack(player, stack)) return;
         }
-        player.setItemSlot(EquipmentSlot.CHEST, stack);
+        if (ModConfig.get().enableChestSlot) {
+            player.setItemSlot(EquipmentSlot.CHEST, stack);
+        }
     }
 
     @Override
@@ -94,19 +99,29 @@ public class FabricPlatformHelper implements IPlatformHelper {
             ItemStack trinketsStack = TrinketsHelper.getEquippedBackpack(livingEntity);
             if (!trinketsStack.isEmpty()) return trinketsStack;
         }
-        ItemStack chest = livingEntity.getItemBySlot(EquipmentSlot.CHEST);
-        return chest.is(BPItems.BACKPACK) ? chest : ItemStack.EMPTY;
+        if (ModConfig.get().enableChestSlot) {
+            ItemStack chest = livingEntity.getItemBySlot(EquipmentSlot.CHEST);
+            return chest.is(BPItems.BACKPACK) ? chest : ItemStack.EMPTY;
+        }
+        return ItemStack.EMPTY;
     }
 
     @Override
     public boolean isBackpackVisible(LivingEntity livingEntity) {
         if (ModConfig.get().enableAccessoriesIntegration && isModLoaded("accessories")) {
-            return AccessoriesHelper.isBackpackVisible(livingEntity);
+            if (!AccessoriesHelper.getEquippedBackpack(livingEntity).isEmpty()) {
+                return AccessoriesHelper.isBackpackVisible(livingEntity);
+            }
         }
         if (ModConfig.get().enableTrinketsIntegration && isModLoaded("trinkets")) {
-            return TrinketsHelper.isBackpackVisible(livingEntity);
+            if (!TrinketsHelper.getEquippedBackpack(livingEntity).isEmpty()) {
+                return TrinketsHelper.isBackpackVisible(livingEntity);
+            }
         }
-        return livingEntity.getItemBySlot(EquipmentSlot.CHEST).is(BPItems.BACKPACK);
+        if (ModConfig.get().enableChestSlot) {
+            return livingEntity.getItemBySlot(EquipmentSlot.CHEST).is(BPItems.BACKPACK);
+        }
+        return false;
     }
 
     @Override

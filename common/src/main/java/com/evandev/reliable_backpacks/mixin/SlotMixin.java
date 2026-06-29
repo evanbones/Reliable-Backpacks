@@ -46,6 +46,12 @@ public abstract class SlotMixin {
 
         if (thisSlot.container instanceof Inventory) {
             int slotIndex = thisSlot.getContainerSlot();
+            if (slotIndex == 38 && !ModConfig.get().enableChestSlot) {
+                if (stack.is(BPItems.BACKPACK)) {
+                    cir.setReturnValue(false);
+                    return;
+                }
+            }
             if (slotIndex < 36 || (slotIndex == 38 && backpacks$hasBackSlotMod()) || slotIndex == 40) {
                 if (backpacks$isNonEmptyBackpack(stack)) {
                     cir.setReturnValue(false);

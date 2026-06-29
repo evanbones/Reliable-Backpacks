@@ -1,4 +1,7 @@
+### Changed
+
+- Added a config option to disable putting backpacks in the chestplate slot.
+
 ### Fixed
 
-- Fixed issues with Sable sub-levels.
-- Backpacks can now be placed even when the offhand has an item.
+- Fixed issues with Accessories integration.
