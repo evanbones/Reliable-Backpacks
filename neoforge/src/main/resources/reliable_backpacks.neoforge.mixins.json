@@ -3,9 +3,12 @@
     "minVersion": "0.8",
     "package": "com.evandev.reliable_backpacks.mixin",
     "compatibilityLevel": "JAVA_21",
+    "plugin": "com.evandev.reliable_backpacks.mixin.ReliableBackpacksNeoForgeMixinPlugin",
     "mixins": [
+        "QuarkBackpackMenuMixin"
     ],
     "client": [
+        "client.QuarkBackpackScreenMixin"
     ],
     "server": [
     ],

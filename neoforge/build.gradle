@@ -54,6 +54,9 @@ dependencies {
     compileOnly "maven.modrinth:figura:${figura_version_neoforge}"
     compileOnly "maven.modrinth:vanity-core:5.0.2"
     compileOnly "maven.modrinth:curios:${curios_version}"
+    compileOnly "maven.modrinth:quark:4.1-481"
+    runtimeOnly "maven.modrinth:quark:4.1-481"
+    runtimeOnly "maven.modrinth:zeta:1.1-40"
 
     jarJar(implementation("com.moulberry:mixinconstraints:1.0.7") {
         exclude group: "org.slf4j",

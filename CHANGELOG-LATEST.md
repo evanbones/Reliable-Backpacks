@@ -1,7 +1,3 @@
-### Changed
+### Added
 
-- Added a config option to disable putting backpacks in the chestplate slot.
-
-### Fixed
-
-- Fixed issues with Accessories integration.
+- Added Quark sort and search support for backpacks.
