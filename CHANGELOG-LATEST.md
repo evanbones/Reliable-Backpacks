@@ -1,6 +1,6 @@
 ### Changed
 
-- Dyed backpacks now have a new texture (thanks, drewww!)
+- Dyed backpacks now have a new texture (thanks, [Sorcell](https://modrinth.com/user/Sorcell)!)
 
 ### Fixed
 

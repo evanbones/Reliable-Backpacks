@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Dyed backpacks now have a new texture (thanks, drewww!)
+- Dyed backpacks now have a new texture (thanks, [Sorcell](https://modrinth.com/user/Sorcell)!)
 
 ### Fixed
 
