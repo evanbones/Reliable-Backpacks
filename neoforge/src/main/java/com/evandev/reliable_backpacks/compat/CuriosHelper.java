@@ -38,6 +38,20 @@ public class CuriosHelper {
         return false;
     }
 
+    public static boolean unequipBackpack(Player player) {
+        Optional<ICuriosItemHandler> curios = CuriosApi.getCuriosInventory(player);
+        if (curios.isPresent() && curios.get().getCurios().get("back") != null) {
+            var inventory = curios.get().getCurios().get("back").getStacks();
+            for (int i = 0; i < inventory.getSlots(); i++) {
+                if (inventory.getStackInSlot(i).is(BPItems.BACKPACK)) {
+                    inventory.setStackInSlot(i, ItemStack.EMPTY);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public static ItemStack getEquippedBackpack(LivingEntity livingEntity) {
         Optional<SlotResult> result = CuriosApi.getCuriosInventory(livingEntity).flatMap(inv -> inv.findFirstCurio(BPItems.BACKPACK));
         return result.map(SlotResult::stack).orElse(ItemStack.EMPTY);

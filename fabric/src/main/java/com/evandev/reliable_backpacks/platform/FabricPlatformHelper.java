@@ -90,6 +90,21 @@ public class FabricPlatformHelper implements IPlatformHelper {
     }
 
     @Override
+    public void unequipBackpack(Player player) {
+        if (ModConfig.get().enableAccessoriesIntegration && isModLoaded("accessories")) {
+            if (AccessoriesHelper.unequipBackpack(player)) return;
+        }
+        if (ModConfig.get().enableTrinketsIntegration && isModLoaded("trinkets")) {
+            if (TrinketsHelper.unequipBackpack(player)) return;
+        }
+        if (ModConfig.get().enableChestSlot) {
+            if (player.getItemBySlot(EquipmentSlot.CHEST).is(BPItems.BACKPACK)) {
+                player.setItemSlot(EquipmentSlot.CHEST, ItemStack.EMPTY);
+            }
+        }
+    }
+
+    @Override
     public ItemStack getEquippedBackpack(LivingEntity livingEntity) {
         if (ModConfig.get().enableAccessoriesIntegration && isModLoaded("accessories")) {
             ItemStack accStack = AccessoriesHelper.getEquippedBackpack(livingEntity);

@@ -42,6 +42,23 @@ public class TrinketsHelper {
         return false;
     }
 
+    public static boolean unequipBackpack(Player player) {
+        Optional<TrinketComponent> comp = TrinketsApi.getTrinketComponent(player);
+        if (comp.isPresent()) {
+            var group = comp.get().getInventory().get("chest");
+            if (group != null && group.get("back") != null) {
+                var slot = group.get("back");
+                for (int i = 0; i < slot.getContainerSize(); i++) {
+                    if (slot.getItem(i).is(BPItems.BACKPACK)) {
+                        slot.setItem(i, ItemStack.EMPTY);
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     public static ItemStack getEquippedBackpack(LivingEntity livingEntity) {
         Optional<TrinketComponent> comp = TrinketsApi.getTrinketComponent(livingEntity);
         if (comp.isPresent()) {

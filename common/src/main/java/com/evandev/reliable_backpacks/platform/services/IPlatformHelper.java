@@ -73,6 +73,11 @@ public interface IPlatformHelper {
     void equipBackpack(Player player, ItemStack stack);
 
     /**
+     * Unequips/removes the equipped backpack from the player.
+     */
+    void unequipBackpack(Player player);
+
+    /**
      * Checks if the player has a backpack equipped in any slot (Chest or Accessories).
      */
     boolean isBackpackEquipped(LivingEntity livingEntity);

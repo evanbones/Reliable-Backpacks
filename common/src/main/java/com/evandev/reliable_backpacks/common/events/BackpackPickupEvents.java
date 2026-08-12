@@ -57,7 +57,10 @@ public class BackpackPickupEvents {
             if (!backpackStack.isEmpty()) {
                 if (!level.getBlockState(pos).useWithoutItem(level, player, hitResult).consumesAction()) {
                     BlockPlaceContext context = new BlockPlaceContext(player, hand, backpackStack, hitResult);
-                    BPItems.BACKPACK.place(context);
+                    InteractionResult result = BPItems.BACKPACK.place(context);
+                    if (result.consumesAction()) {
+                        Services.PLATFORM.unequipBackpack(player);
+                    }
                 }
                 return InteractionResult.sidedSuccess(level.isClientSide);
             }

@@ -29,6 +29,18 @@ public class AccessoriesHelper {
         return false;
     }
 
+    public static boolean unequipBackpack(Player player) {
+        AccessoriesCapability capability = AccessoriesCapability.get(player);
+        if (capability != null) {
+            List<SlotEntryReference> equipped = capability.getEquipped(BPItems.BACKPACK);
+            if (!equipped.isEmpty()) {
+                equipped.getFirst().reference().setStack(ItemStack.EMPTY);
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static ItemStack getEquippedBackpack(LivingEntity livingEntity) {
         AccessoriesCapability capability = AccessoriesCapability.get(livingEntity);
         if (capability != null) {
