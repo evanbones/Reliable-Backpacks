@@ -1,3 +1,3 @@
 ### Fixed
 
-- Hopefully fixed network issues when opening other people's Backpacks on servers.
+- Fixed backpack voiding when it can't be placed down.

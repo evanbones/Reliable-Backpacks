@@ -72,20 +72,18 @@ public abstract class ItemEntityMixin extends Entity {
             }
 
             Level level = this.getLevel();
-            BlockPos pos = this.blockPosition();
-            BlockPos targetPos = level.getBlockState(pos).getMaterial().isReplaceable() ? pos : pos.above();
+            BlockPos pos = this.getOnPos();
+            boolean isUnobstructed = level.getBlockState(pos.above()).getMaterial().isReplaceable() &&
+                    (!level.getFluidState(pos.above()).isSource() || !level.getBlockState(pos.above(2)).getMaterial().isReplaceable());
 
-            boolean isUnobstructed = level.getBlockState(targetPos).getMaterial().isReplaceable() &&
-                    (!level.getFluidState(targetPos).isSource() || !level.getBlockState(targetPos.above()).getMaterial().isReplaceable());
-
-            if ((this.isOnGround() || level.getFluidState(pos).isSource()) && isUnobstructed) {
+            if ((!level.getBlockState(pos).getMaterial().isReplaceable() || level.getFluidState(pos).isSource()) && isUnobstructed) {
 
                 BlockState state = BPBlocks.BACKPACK.defaultBlockState()
                         .setValue(FACING, this.getDirection())
-                        .setValue(FLOATING, level.getFluidState(targetPos.below()).isSource() && !level.getFluidState(targetPos).isSource())
-                        .setValue(WATERLOGGED, level.getFluidState(targetPos).getType() == Fluids.WATER);
+                        .setValue(FLOATING, level.getFluidState(pos).isSource() && !level.getFluidState(pos.above()).isSource())
+                        .setValue(WATERLOGGED, level.getFluidState(pos.above()).getType() == Fluids.WATER);
 
-                BackpackBlockEntity blockEntity = new BackpackBlockEntity(targetPos, state);
+                BackpackBlockEntity blockEntity = new BackpackBlockEntity(pos.above(), state);
 
                 CompoundTag nbt = itemStack.getTagElement("BlockEntityTag");
                 if (nbt != null) {
@@ -108,12 +106,11 @@ public abstract class ItemEntityMixin extends Entity {
                 blockEntity.placeTicks = 0;
 
                 if (!level.isClientSide) {
-                    level.setBlockAndUpdate(targetPos, state);
+                    level.setBlockAndUpdate(pos.above(), state);
                     level.setBlockEntity(blockEntity);
-                    level.playSound(null, targetPos, BPSounds.BACKPACK_PLACE, SoundSource.BLOCKS, 1.0F, 1.0F);
+                    level.playSound(null, pos.above(), BPSounds.BACKPACK_PLACE, SoundSource.BLOCKS, 1.0F, 1.0F);
+                    this.discard();
                 }
-
-                this.discard();
             }
         }
     }
