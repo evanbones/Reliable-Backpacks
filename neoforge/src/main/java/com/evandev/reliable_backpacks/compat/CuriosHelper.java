@@ -1,17 +1,35 @@
 package com.evandev.reliable_backpacks.compat;
 
+import com.evandev.reliable_backpacks.config.ModConfig;
 import com.evandev.reliable_backpacks.registry.BPItems;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.common.util.TriState;
 import top.theillusivec4.curios.api.CuriosApi;
 import top.theillusivec4.curios.api.SlotContext;
 import top.theillusivec4.curios.api.SlotResult;
+import top.theillusivec4.curios.api.event.CurioCanEquipEvent;
 import top.theillusivec4.curios.api.type.capability.ICuriosItemHandler;
 
 import java.util.Optional;
 
 public class CuriosHelper {
+
+    public static void registerEvents() {
+        NeoForge.EVENT_BUS.addListener(CuriosHelper::onCanEquip);
+    }
+
+    private static void onCanEquip(CurioCanEquipEvent event) {
+        if (!ModConfig.get().enableCuriosIntegration || !ModConfig.get().enableChestSlot) return;
+        if (!event.getStack().is(BPItems.BACKPACK)) return;
+
+        if (event.getSlotContext().entity().getItemBySlot(EquipmentSlot.CHEST).is(BPItems.BACKPACK)) {
+            event.setEquipResult(TriState.FALSE);
+        }
+    }
 
     public static boolean canEquipBackpack(Player player) {
         Optional<ICuriosItemHandler> curios = CuriosApi.getCuriosInventory(player);

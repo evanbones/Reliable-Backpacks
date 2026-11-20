@@ -37,6 +37,20 @@ neoForge {
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
+repositories {
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = 'CreateMod'
+                url = 'https://maven.createmod.net'
+            }
+        }
+        filter {
+            includeGroup 'com.simibubi.create'
+        }
+    }
+}
+
 dependencies {
     // EMI
     implementation "dev.emi:emi-neoforge:${emi_version}"
@@ -54,6 +68,7 @@ dependencies {
     compileOnly "maven.modrinth:figura:${figura_version_neoforge}"
     compileOnly "maven.modrinth:vanity-core:5.0.2"
     compileOnly "maven.modrinth:curios:${curios_version}"
+    compileOnly("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") { transitive = false }
     compileOnly "maven.modrinth:quark:4.1-481"
     runtimeOnly "maven.modrinth:quark:4.1-481"
     runtimeOnly "maven.modrinth:zeta:1.1-40"

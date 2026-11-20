@@ -33,7 +33,7 @@ public class BackpackMenu extends AbstractContainerMenu {
                 this.addSlot(new Slot(container, k + j * 9, 8 + k * 18, 18 + j * 18) {
                     @Override
                     public boolean mayPlace(@NotNull ItemStack stack) {
-                        return !stack.is(BPTags.BACKPACK_BLACKLIST) && stack.getItem().canFitInsideContainerItems();
+                        return BPTags.canStoreInBackpack(stack);
                     }
                 });
             }

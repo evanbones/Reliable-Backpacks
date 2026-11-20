@@ -28,6 +28,9 @@ public class ReliableBackpacksNeoForgeMixinPlugin implements IMixinConfigPlugin 
         if (mixinClassName.contains("Quark")) {
             return isModLoaded("quark");
         }
+        if (mixinClassName.contains(".create.")) {
+            return isModLoaded("create");
+        }
         return true;
     }
 

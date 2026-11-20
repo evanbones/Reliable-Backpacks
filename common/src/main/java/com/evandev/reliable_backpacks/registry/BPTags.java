@@ -5,7 +5,12 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 
 public class BPTags {
     public static final TagKey<Item> BACKPACK_BLACKLIST = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "backpack_blacklist"));
+
+    public static boolean canStoreInBackpack(ItemStack stack) {
+        return !stack.is(BPItems.BACKPACK) && !stack.is(BACKPACK_BLACKLIST);
+    }
 }

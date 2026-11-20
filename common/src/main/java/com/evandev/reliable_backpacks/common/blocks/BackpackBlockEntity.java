@@ -219,7 +219,7 @@ public class BackpackBlockEntity extends RandomizableContainerBlockEntity {
 
     @Override
     public boolean canPlaceItem(int index, ItemStack stack) {
-        if (stack.is(BPTags.BACKPACK_BLACKLIST) || !stack.getItem().canFitInsideContainerItems()) {
+        if (!BPTags.canStoreInBackpack(stack)) {
             return false;
         }
         return super.canPlaceItem(index, stack);

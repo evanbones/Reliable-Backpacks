@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.10.0] - 2026-11-20
+
+### Changed
+
+- The `reliable_backpacks:backpack_blacklist` item tag now fully controls which items can go in a backpack, so datapacks
+  can allow shulker boxes and sacks.
+- You can no longer wear two backpacks at once.
+
+### Fixed
+
+- Fixed placing a backpack while wearing two at once deleting the chest slot backpack.
+- Fixed backpacks being placeable in Spectator mode.
+- Fixed Create chutes picking up filled backpacks.
+
 ## [1.9.1] - 2026-09-06
 
 ### Added

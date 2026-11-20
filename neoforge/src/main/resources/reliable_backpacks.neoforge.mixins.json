@@ -5,7 +5,9 @@
     "compatibilityLevel": "JAVA_21",
     "plugin": "com.evandev.reliable_backpacks.mixin.ReliableBackpacksNeoForgeMixinPlugin",
     "mixins": [
-        "QuarkBackpackMenuMixin"
+        "QuarkBackpackMenuMixin",
+        "create.CreateChuteBlockEntityMixin",
+        "create.CreateItemHelperMixin"
     ],
     "client": [
         "client.QuarkBackpackScreenMixin"

@@ -25,6 +25,8 @@ import java.util.Objects;
 public class BackpackPickupEvents {
 
     public static InteractionResult onRightClickBlock(Player player, Level level, InteractionHand hand, BlockHitResult hitResult) {
+        if (player.isSpectator()) return InteractionResult.PASS;
+
         BlockPos pos = hitResult.getBlockPos();
         Block block = level.getBlockState(pos).getBlock();
         BlockEntity blockEntity = level.getBlockEntity(pos);
@@ -56,7 +58,7 @@ public class BackpackPickupEvents {
 
             if (!backpackStack.isEmpty()) {
                 if (!level.getBlockState(pos).useWithoutItem(level, player, hitResult).consumesAction()) {
-                    BlockPlaceContext context = new BlockPlaceContext(player, hand, backpackStack, hitResult);
+                    BlockPlaceContext context = new BlockPlaceContext(player, hand, backpackStack.copy(), hitResult);
                     InteractionResult result = BPItems.BACKPACK.place(context);
                     if (result.consumesAction()) {
                         Services.PLATFORM.unequipBackpack(player);

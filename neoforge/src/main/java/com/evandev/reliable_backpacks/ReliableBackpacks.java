@@ -4,11 +4,13 @@ import com.evandev.reliable_backpacks.client.ClientConfigSetup;
 import com.evandev.reliable_backpacks.client.ReliableBackpacksClient;
 import com.evandev.reliable_backpacks.common.events.BackpackPickupEvents;
 import com.evandev.reliable_backpacks.common.events.EntityInteractionEvents;
+import com.evandev.reliable_backpacks.compat.CuriosHelper;
 import com.evandev.reliable_backpacks.networking.BackpackOpenPayload;
 import com.evandev.reliable_backpacks.networking.BackpackPayloadHandler;
 import net.minecraft.world.InteractionResult;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.common.NeoForge;
@@ -39,6 +41,10 @@ public class ReliableBackpacks {
         NeoForge.EVENT_BUS.addListener(this::onRightClickBlock);
         NeoForge.EVENT_BUS.addListener(this::onRightClickItem);
         NeoForge.EVENT_BUS.addListener(this::onEntityInteract);
+
+        if (ModList.get().isLoaded("curios")) {
+            CuriosHelper.registerEvents();
+        }
     }
 
     private void onRegister(RegisterEvent event) {
